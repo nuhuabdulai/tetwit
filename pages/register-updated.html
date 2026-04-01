@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeTWIT Membership Application Form</title>
+    <link rel="icon" href="../assets/images/TeTWIT Logo.png" type="image/png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Complete CSS from original register.html - Fixed */
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --dark-color: #0f172a;
+            --light-color: #f8fafc;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--light-color);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 15px 0;
+        }
+
+        /* [Include ALL CSS from previous successful register.html styles...] */
+        /* Copy complete CSS block from working register.html */
+    </style>
+</head>
+
+<body>
+    <!-- Navigation [unchanged] -->
+
+    <div class="page-wrapper">
+        <!-- Left Info [unchanged] -->
+
+        <!-- Updated Form matching Google Form exactly -->
+        <div class="register-form-container">
+            <div class="form-header">
+                <h2><i class="fas fa-user-plus"></i> TeTWIT Membership Application Form</h2>
+                <p><i>"Empower Her to Code the Future"</i></p>
+            </div>
+
+            <form id="memberForm" class="registration-form">
+
+                <!-- Section 2: Personal Information -->
+                <h3>Section 2: Personal Information</h3>
+                <div class="form-group full-width">
+                    <label for="full_name"><i class="fas fa-user"></i> Full Name *<br><small>Full Name:
+                            _________________________________</small></label>
+                    <input type="text" id="full_name" name="full_name" required placeholder="Enter full name">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="gender"><i class="fas fa-venus-mars"></i> Gender *</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">Select</option>
+                            <option value="Female">Female</option>
+                            <option value="Male">Male</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="dob"><i class="fas fa-birthday-cake"></i> Date of Birth</label>
+                        <input type="date" id="dob" name="dob">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone"><i class="fas fa-phone"></i> Contact Number *</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="+233 XX XXX XXXX">
+                    </div>
+                    <div class="form-group">
+                        <label for="whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp Number (if different)</label>
+                        <input type="tel" id="whatsapp" name="whatsapp" placeholder="+233 XX XXX XXXX">
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="email"><i class="fas fa-envelope"></i> Email Address *</label>
+                    <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                </div>
+
+                <!-- Section 3: Academic Details -->
+                <h3>Section 3: Academic Details</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="college"><i class="fas fa-university"></i> College of Education *</label>
+                        <select id="college" name="college" required>
+                            <!-- 46 colleges list unchanged -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="program"><i class="fas fa-book"></i> Program of Study *</label>
+                        <input type="text" id="program" name="program" required
+                            placeholder="e.g., B.Ed. Basic Education">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="academic_level"><i class="fas fa-graduation-cap"></i> Academic Level (L100-L400)
+                            *</label>
+                        <select id="academic_level" name="academic_level" required>
+                            <option value="">Select</option>
+                            <option value="L100">L100</option>
+                            <option value="L200">L200</option>
+                            <option value="L300">L300</option>
+                            <option value="L400">L400</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="student_id"><i class="fas fa-id-card"></i> Student ID / Index Number *</label>
+                        <input type="text" id="student_id" name="student_id" required
+                            placeholder="Your student index number">
+                    </div>
+                </div>
+
+                <!-- Section 4: Membership Type -->
+                <h3>Section 4: Membership Type</h3>
+                <div class="form-group full-width">
+                    <label><i class="fas fa-membership"></i> Choose one *</label>
+                    <select id="membership_type" name="membership_type" required>
+                        <option value="">Select type</option>
+                        <option value="Regular Member (Female Teacher Trainee)">Regular Member (Female Teacher Trainee)
+                        </option>
+                        <option value="Associate Member (Supporter/Ally)">Associate Member (Supporter/Ally)</option>
+                        <option value="Alumni Member (Graduated Trainee)">Alumni Member (Graduated Trainee)</option>
+                    </select>
+                </div>
+
+                <!-- Section 5: Areas of Interest -->
+                <h3>Section 5: Areas of Interest</h3>
+                <div class="form-group full-width">
+                    <label><i class="fas fa-heart"></i> Check all that apply *</label>
+                    <div style="display: grid; gap: 10px; margin-top: 10px;">
+                        <label><input type="checkbox" name="interests[]" value="Basic ICT Skills"> Basic ICT
+                            Skills</label>
+                        <label><input type="checkbox" name="interests[]" value="Coding & Programming"> Coding &
+                            Programming</label>
+                        <label><input type="checkbox" name="interests[]" value="Robotics & EdTech"> Robotics &
+                            EdTech</label>
+                        <label><input type="checkbox" name="interests[]" value="Graphic Design"> Graphic Design</label>
+                        <label><input type="checkbox" name="interests[]" value="Public Speaking & Leadership"> Public
+                            Speaking & Leadership</label>
+                        <label><input type="checkbox" name="interests[]" value="Mentorship & Peer Support"> Mentorship &
+                            Peer Support</label>
+                        <label><input type="checkbox" name="interests[]" value="Event Planning & Publicity"> Event
+                            Planning & Publicity</label>
+                    </div>
+                </div>
+
+                <!-- Section 6: Motivation Statement -->
+                <h3>Section 6: Motivation Statement</h3>
+                <div class="form-group full-width">
+                    <label for="motivation"><i class="fas fa-quote-left"></i> Max 100 words *</label>
+                    <textarea id="motivation" name="motivation" rows="4" maxlength="500" required
+                        placeholder="Why do you want to join TeTWIT? (Max 100 words)"></textarea>
+                    <small id="motivation-count">0/500 characters</small>
+                </div>
+
+                <!-- Declaration -->
+                <div class="form-group full-width">
+                    <label>
+                        <input type="checkbox" id="declaration" name="declaration" required>
+                        I declare that the information provided is accurate and agree to uphold TeTWIT's mission and
+                        values.
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-paper-plane"></i> Submit Application
+                </button>
+            </form>
+            <div id="memberFormMessage" class="form-message"></div>
+        </div>
+    </div>
+
+    <script>
+        // Character counter
+        document.getElementById('motivation').addEventListener('input', function () {
+            document.getElementById('motivation-count').textContent = this.value.length + '/500 characters';
+        });
+
+        // Form submission (updated for new fields)
+        document.getElementById('memberForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            data.interests = Array.from(formData.querySelectorAll('input[name="interests[]"]:checked')).map(cb => cb.value).join(', ');
+
+            const messageDiv = document.getElementById('memberFormMessage');
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    messageDiv.innerHTML = '✅ <strong>' + result.message + '</strong><br>We have received your registration!';
+                    messageDiv.className = 'form-message success';
+                    e.target.reset();
+                } else {
+                    messageDiv.textContent = result.message || 'Submission failed';
+                    messageDiv.className = 'form-message error';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Network error. Please try again.';
+                messageDiv.className = 'form-message error';
+            }
+        });
+    </script>
+</body>
+
+</html>

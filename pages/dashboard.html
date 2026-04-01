@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - TeTWIT</title>
+    <link rel="icon" href="../assets/images/TeTWIT Logo.png" type="image/png">
+    
+    <!-- Resource Hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #0f172a;
+            --light-color: #f8fafc;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(99, 102, 241, 0.08), transparent 24%),
+                radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.08), transparent 28%),
+                linear-gradient(180deg, #eef2ff 0%, #f8fafc 38%, #f8fafc 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255,255,255,0.86);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .nav-logo-text h2 {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .nav-logo-text span {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-info .name {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .user-info .college {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            box-shadow: 0 12px 24px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-logout {
+            padding: 8px 16px;
+            background: #fee2e2;
+            color: var(--danger-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding: 30px 20px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: var(--gradient);
+            color: white;
+            padding: 42px;
+            border-radius: 28px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 28px 70px rgba(99, 102, 241, 0.24);
+        }
+
+        .welcome-section::before,
+        .welcome-section::after {
+            content: '';
+            position: absolute;
+            border-radius: 999px;
+            pointer-events: none;
+        }
+
+        .welcome-section::before {
+            width: 260px;
+            height: 260px;
+            top: -110px;
+            right: -80px;
+            background: rgba(255,255,255,0.12);
+        }
+
+        .welcome-section::after {
+            width: 180px;
+            height: 180px;
+            bottom: -70px;
+            left: 12%;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .welcome-badge,
+        .section-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .welcome-badge {
+            background: rgba(255,255,255,0.14);
+            border: 1px solid rgba(255,255,255,0.16);
+            margin-bottom: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+            max-width: 760px;
+        }
+
+        .welcome-section h1 {
+            font-size: 2.35rem;
+            margin-bottom: 12px;
+            line-height: 1.06;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .welcome-section p {
+            opacity: 0.9;
+            font-size: 1.08rem;
+            line-height: 1.8;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.82));
+            padding: 25px;
+            border-radius: 22px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 24px 48px rgba(15, 23, 42, 0.09);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.events {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+        }
+
+        .stat-icon.elections {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success-color);
+        }
+
+        .stat-icon.mentorship {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .stat-icon.skills {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--secondary-color);
+        }
+
+        .stat-info h3 {
+            font-size: 2rem;
+            color: var(--dark-color);
+        }
+
+        .stat-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.86));
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+            margin-bottom: 25px;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+        }
+
+        .content-card h2 {
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: space-between;
+            font-size: 1.25rem;
+        }
+
+        .content-card h2 i {
+            color: var(--primary-color);
+        }
+
+        .card-title {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-chip {
+            color: var(--primary-color);
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.12);
+        }
+
+        /* Profile Card */
+        .profile-card {
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin: 0 auto 20px;
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.22);
+        }
+
+        .profile-info h3 {
+            font-size: 1.5rem;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .profile-info p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .profile-details {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .profile-details .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e8edf5;
+            gap: 12px;
+        }
+
+        .profile-details .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .profile-details .label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .profile-details .value {
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+
+        /* Event List */
+        .event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .event-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+            border-radius: 18px;
+            transition: all 0.3s;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+
+        .event-item:hover {
+            background: white;
+            transform: translateY(-3px);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+        }
+
+        .event-date {
+            background: var(--gradient);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .event-date .day {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .event-date .month {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .event-details h4 {
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .event-details p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .event-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .event-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Election List */
+        .election-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .election-item {
+            padding: 15px;
+            background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+            border-radius: 18px;
+            border-left: 4px solid var(--primary-color);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+
+        .election-item h4 {
+            color: var(--dark-color);
+            margin-bottom: 8px;
+        }
+
+        .election-item p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .election-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .election-status.active {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success-color);
+        }
+
+        .election-status.upcoming {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .action-btn {
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            background: linear-gradient(180deg, #fff, #f8fafc);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary-color);
+            background: rgba(99, 102, 241, 0.05);
+            transform: translateY(-3px);
+        }
+
+        .action-btn i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .action-btn span {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 28px 70px rgba(15, 23, 42, 0.16);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            color: var(--dark-color);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        /* Contact Modal */
+        .contact-modal {
+            max-width: 720px;
+        }
+
+        .contact-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .contact-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            text-decoration: none;
+            color: var(--dark-color);
+            background: #f8fafc;
+            transition: all 0.25s ease;
+        }
+
+        .contact-card:hover {
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .contact-card i {
+            font-size: 1.6rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .contact-card h4 {
+            font-size: 1rem;
+            margin-bottom: 6px;
+        }
+
+        .contact-card p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .welcome-section {
+                padding: 25px;
+            }
+
+            .welcome-section h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-user .user-info {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-logo">
+                <img src="../assets/images/TeTWIT Logo.png" alt="TeTWIT Logo">
+                <div class="nav-logo-text">
+                    <h2>TeTWIT</h2>
+                    <span>Member Portal</span>
+                </div>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="dashboard.html">Home</a></li>
+                <li><a href="#events">Events</a></li>
+                <li><a href="#elections">Elections</a></li>
+                <li><a href="javascript:void(0)" onclick="openResourceCenter()">Resources</a></li>
+            </ul>
+            <div class="nav-user">
+                <div class="user-info">
+                    <div class="name" id="userName">Loading...</div>
+                    <div class="college" id="userCollege">Loading...</div>
+                </div>
+                <div class="user-avatar" id="userAvatar">?</div>
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <div class="welcome-content">
+                <div class="welcome-badge"><i class="fas fa-sparkles"></i> Member Portal</div>
+                <h1>Welcome back, <span id="welcomeName">Member</span>!</h1>
+                <p>Ready to continue your tech journey? Check out upcoming events, elections, and opportunities curated for your TeTWIT experience.</p>
+            </div>
+        </section>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon events"><i class="fas fa-calendar-alt"></i></div>
+                <div class="stat-info">
+                    <h3 id="upcomingEvents">0</h3>
+                    <p>Upcoming Events</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon elections"><i class="fas fa-vote-yea"></i></div>
+                <div class="stat-info">
+                    <h3 id="activeElections">0</h3>
+                    <p>Active Elections</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon mentorship"><i class="fas fa-user-friends"></i></div>
+                <div class="stat-info">
+                    <h3 id="mentorshipStatus">-</h3>
+                    <p>Mentorship</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon skills"><i class="fas fa-code"></i></div>
+                <div class="stat-info">
+                    <h3 id="skillsCount">0</h3>
+                    <p>Skills Listed</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Upcoming Events -->
+                <div class="content-card" id="events">
+                    <h2>
+                        <span class="card-title"><i class="fas fa-calendar-alt"></i> Upcoming Events</span>
+                        <span class="section-chip">Live Feed</span>
+                    </h2>
+                    <div class="event-list" id="eventsList">
+                        <p>Loading events...</p>
+                    </div>
+                </div>
+
+                <!-- Active Elections -->
+                <div class="content-card" id="elections">
+                    <h2>
+                        <span class="card-title"><i class="fas fa-vote-yea"></i> Active Elections</span>
+                        <span class="section-chip">Voting</span>
+                    </h2>
+                    <div class="election-list" id="electionsList">
+                        <p>Loading elections...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Profile Card -->
+                <div class="content-card profile-card">
+                    <h2>
+                        <span class="card-title"><i class="fas fa-user"></i> My Profile</span>
+                        <span class="section-chip">Member</span>
+                    </h2>
+                    <div class="profile-avatar" id="profileAvatar">?</div>
+                    <div class="profile-info">
+                        <h3 id="profileName">Loading...</h3>
+                        <p id="profileCollege">Loading...</p>
+                    </div>
+                    <div class="profile-details">
+                        <div class="detail-item">
+                            <span class="label">Email</span>
+                            <span class="value" id="profileEmail">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Phone</span>
+                            <span class="value" id="profilePhone">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Program</span>
+                            <span class="value" id="profileProgram">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Year</span>
+                            <span class="value" id="profileYear">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Membership</span>
+                            <span class="value" id="profileMembership">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Status</span>
+                            <span class="value" id="profileStatus">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Skills</span>
+                            <span class="value" id="profileSkills">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Interests</span>
+                            <span class="value" id="profileInterests">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Member Since</span>
+                            <span class="value" id="profileJoined">-</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="openEditProfileModal()" style="width: 100%; margin-top: 20px;">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </button>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="content-card">
+                    <h2>
+                        <span class="card-title"><i class="fas fa-bolt"></i> Quick Actions</span>
+                        <span class="section-chip">Shortcuts</span>
+                    </h2>
+                    <div class="quick-actions">
+                        <button class="action-btn" onclick="openEventRegistration()">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>Register for Event</span>
+                        </button>
+                        <button class="action-btn" onclick="scrollToElections()">
+                            <i class="fas fa-vote-yea"></i>
+                            <span>Vote in Election</span>
+                        </button>
+                        <button class="action-btn" onclick="openResourceCenter()">
+                            <i class="fas fa-book"></i>
+                            <span>Resources</span>
+                        </button>
+                        <button class="action-btn" onclick="openContactForm()">
+                            <i class="fas fa-envelope"></i>
+                            <span>Contact Us</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Profile</h3>
+                <button class="modal-close" onclick="closeEditProfileModal()">&times;</button>
+            </div>
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" id="editFirstName" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" id="editLastName" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="editPhone">
+                </div>
+                <div class="form-group">
+                    <label>Program of Study</label>
+                    <input type="text" id="editProgram">
+                </div>
+                <div class="form-group">
+                    <label>Year of Study</label>
+                    <select id="editYear">
+                        <option value="Year 1">Year 1</option>
+                        <option value="Year 2">Year 2</option>
+                        <option value="Year 3">Year 3</option>
+                        <option value="Year 4">Year 4</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>ICT Skills</label>
+                    <input type="text" id="editSkills" placeholder="e.g., Python, Web Design, MS Office">
+                </div>
+                <div class="form-group">
+                    <label>Areas of Interest</label>
+                    <textarea id="editInterests" rows="3" placeholder="What ICT areas interest you most?"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Event Registration Modal -->
+    <div id="eventRegistrationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Register for Event</h3>
+                <button class="modal-close" onclick="closeEventRegistrationModal()">&times;</button>
+            </div>
+            <div id="availableEvents">
+                <p>Loading available events...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content contact-modal">
+            <div class="modal-header">
+                <h3>Contact TeTWIT</h3>
+                <button class="modal-close" onclick="closeContactModal()">&times;</button>
+            </div>
+            <div class="contact-cards">
+                <a href="#" class="contact-card">
+                    <i class="fas fa-user"></i>
+                    <h4>Pious Akwasi Sarpong</h4>
+                    <p>National Coordinator, TeTWIT Initiative</p>
+                </a>
+                <a href="tel:+233244767163" class="contact-card">
+                    <i class="fas fa-phone"></i>
+                    <h4>+233 244 767 163</h4>
+                    <p>Call or WhatsApp</p>
+                </a>
+                <a href="mailto:akwasisarpong@sedacoe.edu.gh?subject=TeTWIT%20Inquiry" class="contact-card">
+                    <i class="fas fa-envelope"></i>
+                    <h4>Email Us</h4>
+                    <p>akwasisarpong@sedacoe.edu.gh</p>
+                </a>
+                <a href="https://maps.google.com/?q=SDA+College+of+Education+Asokore-Koforidua+Ghana" target="_blank" class="contact-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h4>SDA College of Education</h4>
+                    <p>P.O. Box AS18, Asokore-Koforidua</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '';
+        let currentUser = null;
+
+        function getToken() {
+            return localStorage.getItem('tetwit_token');
+        }
+
+        function clearSession() {
+            localStorage.removeItem('tetwit_token');
+            localStorage.removeItem('tetwit_user');
+        }
+
+        function redirectToLogin() {
+            clearSession();
+            window.location.href = '/pages/login.html';
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        async function apiFetch(path, options = {}) {
+            const headers = { ...(options.headers || {}) };
+            const token = getToken();
+
+            if (token) {
+                headers.Authorization = `Bearer ${token}`;
+            }
+
+            if (options.body && !headers['Content-Type']) {
+                headers['Content-Type'] = 'application/json';
+            }
+
+            const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
+
+            if (response.status === 401 || response.status === 403) {
+                redirectToLogin();
+                throw new Error('Unauthorized');
+            }
+
+            return response;
+        }
+
+        function displayUserProfile() {
+            if (!currentUser) return;
+
+            const initials = (currentUser.first_name?.[0] || '') + (currentUser.last_name?.[0] || '');
+
+            document.getElementById('userName').textContent = `${currentUser.first_name} ${currentUser.last_name}`;
+            document.getElementById('userCollege').textContent = currentUser.college || 'TeTWIT Member';
+            document.getElementById('userAvatar').textContent = initials.toUpperCase();
+            document.getElementById('welcomeName').textContent = currentUser.first_name;
+
+            document.getElementById('profileAvatar').textContent = initials.toUpperCase();
+            document.getElementById('profileName').textContent = `${currentUser.first_name} ${currentUser.last_name}`;
+            document.getElementById('profileCollege').textContent = currentUser.college || 'Not specified';
+            document.getElementById('profileEmail').textContent = currentUser.email || 'Not specified';
+            document.getElementById('profilePhone').textContent = currentUser.phone || 'Not provided';
+            document.getElementById('profileProgram').textContent = currentUser.program || 'Not specified';
+            document.getElementById('profileYear').textContent = currentUser.year_of_study || currentUser.academic_level || 'Not specified';
+            document.getElementById('profileMembership').textContent = currentUser.membership_type || 'Full Member';
+            document.getElementById('profileStatus').textContent = currentUser.status || 'Active';
+            document.getElementById('profileSkills').textContent = currentUser.skills || 'Not specified';
+            document.getElementById('profileInterests').textContent = currentUser.interests || 'Not specified';
+            document.getElementById('profileJoined').textContent = currentUser.created_at ? new Date(currentUser.created_at).toLocaleDateString() : 'Not available';
+
+            const skills = currentUser.skills ? currentUser.skills.split(',').filter(Boolean).length : 0;
+            document.getElementById('skillsCount').textContent = skills;
+        }
+
+        async function loadUserData() {
+            const token = getToken();
+            if (!token) {
+                redirectToLogin();
+                return;
+            }
+
+            const response = await apiFetch('/api/auth/me');
+            const result = await response.json();
+
+            if (!result.success) {
+                redirectToLogin();
+                return;
+            }
+
+            currentUser = result.data;
+            localStorage.setItem('tetwit_user', JSON.stringify(currentUser));
+            displayUserProfile();
+        }
+
+        async function loadEvents() {
+            try {
+                const response = await apiFetch('/api/events');
+                const data = await response.json();
+
+                if (!data.success) return;
+
+                const upcomingEvents = data.data.filter(event => event.event_date && new Date(event.event_date) > new Date());
+                document.getElementById('upcomingEvents').textContent = upcomingEvents.length;
+
+                const eventsList = document.getElementById('eventsList');
+                if (upcomingEvents.length === 0) {
+                    eventsList.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No upcoming events at the moment.</p>';
+                    return;
+                }
+
+                eventsList.innerHTML = upcomingEvents.slice(0, 5).map(event => {
+                    const date = new Date(event.event_date);
+                    return `
+                        <div class="event-item">
+                            <div class="event-date">
+                                <div class="day">${date.getDate()}</div>
+                                <div class="month">${escapeHtml(date.toLocaleString('default', { month: 'short' }))}</div>
+                            </div>
+                            <div class="event-details">
+                                <h4>${escapeHtml(event.title)}</h4>
+                                <p>${escapeHtml(event.description || 'No description available')}</p>
+                                <div class="event-meta">
+                                    <span><i class="fas fa-map-marker-alt"></i> ${escapeHtml(event.location || 'TBA')}</span>
+                                    <span><i class="fas fa-clock"></i> ${escapeHtml(date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading events:', error);
+            }
+        }
+
+        async function loadElections() {
+            try {
+                const response = await apiFetch('/api/elections');
+                const data = await response.json();
+
+                if (!data.success) return;
+
+                const now = new Date();
+                const activeElections = data.data.filter(election => {
+                    const start = new Date(election.start_date);
+                    const end = new Date(election.end_date);
+                    return now >= start && now <= end;
+                });
+
+                document.getElementById('activeElections').textContent = activeElections.length;
+
+                const electionsList = document.getElementById('electionsList');
+                if (activeElections.length === 0) {
+                    electionsList.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No active elections at the moment.</p>';
+                    return;
+                }
+
+                electionsList.innerHTML = activeElections.map(election => `
+                    <div class="election-item">
+                        <h4>${escapeHtml(election.title)}</h4>
+                        <p><strong>Position:</strong> ${escapeHtml(election.position)}</p>
+                        <p><strong>Level:</strong> ${escapeHtml(election.level)}${election.college ? ` - ${escapeHtml(election.college)}` : ''}</p>
+                        <span class="election-status active">Active - Vote Now</span>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading elections:', error);
+            }
+        }
+
+        function openEditProfileModal() {
+            if (!currentUser) return;
+
+            document.getElementById('editFirstName').value = currentUser.first_name || '';
+            document.getElementById('editLastName').value = currentUser.last_name || '';
+            document.getElementById('editPhone').value = currentUser.phone || '';
+            document.getElementById('editProgram').value = currentUser.program || '';
+            document.getElementById('editYear').value = currentUser.year_of_study || currentUser.academic_level || '';
+            document.getElementById('editSkills').value = currentUser.skills || '';
+            document.getElementById('editInterests').value = currentUser.interests || '';
+
+            document.getElementById('editProfileModal').classList.add('active');
+        }
+
+        function closeEditProfileModal() {
+            document.getElementById('editProfileModal').classList.remove('active');
+        }
+
+        function openEventRegistration() {
+            document.getElementById('eventRegistrationModal').classList.add('active');
+            loadAvailableEvents();
+        }
+
+        function closeEventRegistrationModal() {
+            document.getElementById('eventRegistrationModal').classList.remove('active');
+        }
+
+        async function loadAvailableEvents() {
+            try {
+                const response = await apiFetch('/api/events');
+                const data = await response.json();
+
+                if (!data.success) return;
+
+                const upcomingEvents = data.data.filter(event => event.event_date && new Date(event.event_date) > new Date());
+                const availableEvents = document.getElementById('availableEvents');
+
+                if (upcomingEvents.length === 0) {
+                    availableEvents.innerHTML = '<p style="text-align: center; color: #666;">No events available for registration.</p>';
+                    return;
+                }
+
+                availableEvents.innerHTML = upcomingEvents.map(event => `
+                    <div style="padding: 15px; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 15px;">
+                        <h4 style="margin-bottom: 8px;">${escapeHtml(event.title)}</h4>
+                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 10px;">${escapeHtml(event.description || 'No description')}</p>
+                        <p style="font-size: 0.85rem; color: #888; margin-bottom: 10px;">
+                            <i class="fas fa-calendar"></i> ${escapeHtml(new Date(event.event_date).toLocaleString())}<br>
+                            <i class="fas fa-map-marker-alt"></i> ${escapeHtml(event.location || 'TBA')}
+                        </p>
+                        <button class="btn btn-primary" onclick="registerForEvent(${Number(event.id)})" style="width: 100%;">
+                            <i class="fas fa-check"></i> Register
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading events:', error);
+            }
+        }
+
+        async function registerForEvent(eventId) {
+            if (!currentUser) return;
+
+            try {
+                const response = await apiFetch(`/api/events/${eventId}/register`, {
+                    method: 'POST',
+                    body: JSON.stringify({})
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Successfully registered for the event!');
+                    closeEventRegistrationModal();
+                } else {
+                    alert(`Error: ${result.message}`);
+                }
+            } catch (error) {
+                alert('Error registering for event');
+            }
+        }
+
+        function scrollToElections() {
+            document.getElementById('elections').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function openResourceCenter() {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'resourceCenterModal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-book"></i> Resource Center</h3>
+                        <button class="modal-close" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div style="margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; color: white;">
+                            <h4 style="margin-bottom: 10px;"><i class="fas fa-cloud-upload-alt"></i> Upload Resource</h4>
+                            <form id="resourceUploadForm" style="display: grid; gap: 12px;">
+                                <input type="text" id="resourceTitle" placeholder="Resource Title *" required 
+                                    style="padding: 10px; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; background: rgba(255,255,255,0.1); color: white; font-size: 0.95rem;">
+                                <textarea id="resourceDescription" placeholder="Description (optional)" rows="2"
+                                    style="padding: 10px; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; background: rgba(255,255,255,0.1); color: white; font-size: 0.95rem; resize: vertical;"></textarea>
+                                <select id="resourceCategory" required
+                                    style="padding: 10px; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; background: rgba(255,255,255,0.1); color: white; font-size: 0.95rem;">
+                                    <option value="" style="color: #333;">Select Category *</option>
+                                    <option value="tutorials" style="color: #333;">Tutorials</option>
+                                    <option value="assignments" style="color: #333;">Assignments</option>
+                                    <option value="presentations" style="color: #333;">Presentations</option>
+                                    <option value="documents" style="color: #333;">Documents</option>
+                                    <option value="videos" style="color: #333;">Videos</option>
+                                    <option value="other" style="color: #333;">Other</option>
+                                </select>
+                                <div style="border: 2px dashed rgba(255,255,255,0.5); border-radius: 8px; padding: 20px; text-align: center; cursor: pointer;"
+                                    onclick="document.getElementById('resourceFile').click()">
+                                    <i class="fas fa-file-upload" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                                    <p style="margin: 0;">Click or drag file here</p>
+                                    <p style="margin: 5px 0 0 0; font-size: 0.85rem; opacity: 0.8;">PDF, DOC, DOCX, JPG, PNG, TXT, PPT (max 10MB)</p>
+                                    <input type="file" id="resourceFile" style="display: none;" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.txt,.ppt,.pptx">
+                                </div>
+                                <p id="selectedFileName" style="margin: 0; font-size: 0.9rem; color: #90cdf4;"></p>
+                                <button type="submit" style="padding: 12px; background: white; color: #667eea; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem;">
+                                    <i class="fas fa-upload"></i> Upload Resource
+                                </button>
+                            </form>
+                            <div id="uploadProgress" style="display: none; margin-top: 15px;">
+                                <div style="background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden;">
+                                    <div id="uploadProgressBar" style="height: 4px; background: white; width: 0%; transition: width 0.3s;"></div>
+                                </div>
+                                <p style="margin: 10px 0 0 0; font-size: 0.9rem;">Uploading... <span id="uploadPercentage">0</span>%</p>
+                            </div>
+                            <p id="uploadMessage" style="margin: 10px 0 0 0; font-size: 0.9rem;"></p>
+                        </div>
+
+                        <h4 style="margin-bottom: 15px; color: var(--primary-color);">
+                            <i class="fas fa-folder-open"></i> Available Resources
+                        </h4>
+                        <div id="resourcesList" style="display: grid; gap: 15px;">
+                            <p style="text-align: center; color: #888; padding: 40px;">Loading resources...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+
+            // File selection display
+            document.getElementById('resourceFile').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                    document.getElementById('selectedFileName').innerHTML = `<i class="fas fa-file"></i> ${file.name} (${sizeMB} MB)`;
+                }
+            });
+
+            // Upload form submission
+            document.getElementById('resourceUploadForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const title = document.getElementById('resourceTitle').value.trim();
+                const description = document.getElementById('resourceDescription').value.trim();
+                const category = document.getElementById('resourceCategory').value;
+                const fileInput = document.getElementById('resourceFile');
+                const file = fileInput.files[0];
+
+                if (!title || !category) {
+                    document.getElementById('uploadMessage').innerHTML = '<span style="color: #feb2b2;">Please fill in all required fields.</span>';
+                    return;
+                }
+
+                if (!file) {
+                    document.getElementById('uploadMessage').innerHTML = '<span style="color: #feb2b2;">Please select a file to upload.</span>';
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('title', title);
+                formData.append('description', description);
+                formData.append('category', category);
+                formData.append('file', file);
+
+                document.getElementById('uploadProgress').style.display = 'block';
+                document.getElementById('uploadMessage').innerHTML = '';
+
+                try {
+                    const token = localStorage.getItem('tetwit_token');
+                    const response = await fetch('/api/resources/upload', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        document.getElementById('uploadMessage').innerHTML = '<span style="color: #9ae6b4;"><i class="fas fa-check-circle"></i> ' + result.message + '</span>';
+                        document.getElementById('resourceUploadForm').reset();
+                        document.getElementById('selectedFileName').innerHTML = '';
+                        loadResources(); // Reload resources list
+                    } else {
+                        document.getElementById('uploadMessage').innerHTML = '<span style="color: #feb2b2;"><i class="fas fa-exclamation-circle"></i> ' + result.message + '</span>';
+                    }
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    document.getElementById('uploadMessage').innerHTML = '<span style="color: #feb2b2;"><i class="fas fa-exclamation-circle"></i> Upload failed. Please try again.</span>';
+                } finally {
+                    document.getElementById('uploadProgress').style.display = 'none';
+                }
+            });
+
+            // Load resources
+            loadResources();
+
+            async function loadResources() {
+                try {
+                    const token = localStorage.getItem('tetwit_token');
+                    const response = await fetch('/api/resources', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    const result = await response.json();
+                    const resourcesList = document.getElementById('resourcesList');
+
+                    if (result.success && result.data.length > 0) {
+                        resourcesList.innerHTML = result.data.map(resource => {
+                            const fileIcon = getFileIcon(resource.file_type);
+                            const fileSize = formatFileSize(resource.file_size);
+                            const uploadDate = new Date(resource.created_at).toLocaleDateString();
+                            const isOwner = resource.uploaded_by === currentUser.id;
+                            const isAdmin = currentUser.role === 'admin';
+
+                            return `
+                                <div style="padding: 15px; background: #f8fafc; border-radius: 10px; border-left: 4px solid #667eea;">
+                                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                                        <div style="flex: 1;">
+                                            <h5 style="margin: 0 0 5px 0; color: #2d3748;">${escapeHtml(resource.title)}</h5>
+                                            <p style="margin: 0 0 8px 0; color: #718096; font-size: 0.9rem;">${escapeHtml(resource.description || 'No description')}</p>
+                                            <div style="display: flex; gap: 15px; font-size: 0.85rem; color: #a0aec0;">
+                                                <span><i class="fas fa-tag"></i> ${resource.category}</span>
+                                                <span><i class="fas fa-file"></i> ${fileIcon} ${resource.file_name}</span>
+                                                <span><i class="fas fa-weight"></i> ${fileSize}</span>
+                                                <span><i class="fas fa-calendar"></i> ${uploadDate}</span>
+                                                <span><i class="fas fa-user"></i> ${resource.first_name || 'Unknown'}</span>
+                                            </div>
+                                        </div>
+                                        <div style="display: flex; gap: 8px;">
+                                            <a href="${resource.file_url}" target="_blank" class="btn" style="padding: 8px 12px; background: #667eea; color: white; border-radius: 6px; text-decoration: none; font-size: 0.85rem;">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                            ${isOwner || isAdmin ? `
+                                                <button onclick="deleteResource(${resource.id}, '${escapeHtml(resource.title)}')" class="btn" style="padding: 8px 12px; background: #e53e3e; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    } else {
+                        resourcesList.innerHTML = '<p style="text-align: center; color: #888; padding: 40px;"><i class="fas fa-folder-open" style="font-size: 2rem; margin-bottom: 10px;"></i><br>No resources uploaded yet. Be the first to share!</p>';
+                    }
+                } catch (error) {
+                    console.error('Error loading resources:', error);
+                    document.getElementById('resourcesList').innerHTML = '<p style="text-align: center; color: #e53e3e; padding: 40px;">Failed to load resources. Please try again.</p>';
+                }
+            }
+        }
+
+        // Helper functions for resource center
+        function getFileIcon(fileType) {
+            if (!fileType) return '';
+            if (fileType.includes('pdf')) return 'PDF';
+            if (fileType.includes('word') || fileType.includes('document')) return 'DOC';
+            if (fileType.includes('image')) return 'IMG';
+            if (fileType.includes('powerpoint') || fileType.includes('presentation')) return 'PPT';
+            if (fileType.includes('text')) return 'TXT';
+            return 'FILE';
+        }
+
+        function formatFileSize(bytes) {
+            if (!bytes) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function deleteResource(id, title) {
+            if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
+
+            try {
+                const token = localStorage.getItem('tetwit_token');
+                const response = await fetch(`/api/resources/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Resource deleted successfully!');
+                    openResourceCenter(); // Refresh the modal
+                } else {
+                    alert('Failed to delete resource: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error deleting resource:', error);
+                alert('Failed to delete resource. Please try again.');
+            }
+        }
+
+        function openContactForm() {
+            const contactModal = document.getElementById('contactModal');
+            if (contactModal) {
+                contactModal.classList.add('active');
+            }
+        }
+
+        function closeContactModal() {
+            const contactModal = document.getElementById('contactModal');
+            if (contactModal) {
+                contactModal.classList.remove('active');
+            }
+        }
+
+        document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            currentUser.first_name = document.getElementById('editFirstName').value.trim();
+            currentUser.last_name = document.getElementById('editLastName').value.trim();
+            currentUser.phone = document.getElementById('editPhone').value.trim();
+            currentUser.program = document.getElementById('editProgram').value.trim();
+            currentUser.year_of_study = document.getElementById('editYear').value.trim();
+            currentUser.skills = document.getElementById('editSkills').value.trim();
+            currentUser.interests = document.getElementById('editInterests').value.trim();
+
+            localStorage.setItem('tetwit_user', JSON.stringify(currentUser));
+            displayUserProfile();
+            closeEditProfileModal();
+
+            alert('Profile updated locally. Server-side profile saving is not implemented yet.');
+        });
+
+        function logout() {
+            clearSession();
+            window.location.href = '/pages/login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await loadUserData();
+                await loadEvents();
+                await loadElections();
+            } catch (error) {
+                console.error('Dashboard initialization failed:', error);
+            }
+
+            const contactModal = document.getElementById('contactModal');
+            if (contactModal) {
+                contactModal.addEventListener('click', (e) => {
+                    if (e.target === contactModal) {
+                        closeContactModal();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

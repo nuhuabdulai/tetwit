@@ -1,0 +1,20 @@
+# node_modules/
+npm-debug.log
+.DS_Store
+*.db
+*.db-shm
+*.db-wal
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.vscode/
+.idea/
+*.log
+coverage/
+.nyc_output/
+temp/
+tmp/
+backups/
+*.backup

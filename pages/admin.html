@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - TeTWIT</title>
+    <link rel="icon" href="../assets/images/TeTWIT Logo.png" type="image/png">
+    
+    <!-- Resource Hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0f766e;
+            --secondary-color: #0f172a;
+            --accent-color: #d97706;
+            --success-color: #15803d;
+            --warning-color: #d97706;
+            --danger-color: #dc2626;
+            --dark-color: #0f172a;
+            --light-color: #f8fafc;
+            --muted-color: #64748b;
+            --gradient: linear-gradient(135deg, #0f766e 0%, #0f9d92 45%, #14b8a6 100%);
+            --hero-gradient: linear-gradient(140deg, #0f172a 0%, #102743 45%, #0f766e 100%);
+            --surface-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(241, 245, 249, 0.94) 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(20, 184, 166, 0.16), transparent 28%),
+                radial-gradient(circle at right center, rgba(217, 119, 6, 0.12), transparent 24%),
+                linear-gradient(180deg, #eff6ff 0%, #f8fafc 45%, #eef2ff 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(18px);
+            padding: 24px 0;
+            z-index: 1000;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 18px 0 40px rgba(15, 23, 42, 0.18);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 22px 28px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-logo img {
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            box-shadow: 0 18px 32px rgba(15, 23, 42, 0.22);
+        }
+
+        .sidebar-logo h2 {
+            color: white;
+            font-size: 1.3rem;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .sidebar-logo span {
+            color: rgba(255,255,255,0.68);
+            font-size: 0.78rem;
+            display: block;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 6px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 20px;
+            margin: 0 12px;
+            border-radius: 14px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: all 0.28s ease;
+            font-weight: 600;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: var(--gradient);
+            color: white;
+            transform: translateX(3px);
+            box-shadow: 0 18px 28px rgba(15, 118, 110, 0.28);
+        }
+
+        .sidebar-menu a i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 28px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--hero-gradient);
+            padding: 30px 32px;
+            border-radius: 28px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 28px 70px rgba(15, 23, 42, 0.22);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before,
+        .header::after {
+            content: '';
+            position: absolute;
+            border-radius: 999px;
+            pointer-events: none;
+        }
+
+        .header::before {
+            width: 280px;
+            height: 280px;
+            top: -120px;
+            right: -90px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .header::after {
+            width: 180px;
+            height: 180px;
+            bottom: -70px;
+            left: 30%;
+            background: rgba(20, 184, 166, 0.12);
+        }
+
+        .header-copy {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            margin-bottom: 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: clamp(2rem, 3vw, 2.65rem);
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            letter-spacing: -0.04em;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.78);
+            max-width: 620px;
+            line-height: 1.7;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .date-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: white;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.28s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 32px rgba(15, 118, 110, 0.28);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--surface-gradient);
+            padding: 25px;
+            border-radius: 24px;
+            box-shadow: 0 24px 45px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(255,255,255,0.78);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+            opacity: 0.85;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 26px 50px rgba(15, 23, 42, 0.12);
+        }
+
+        .stat-card .stat-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .stat-card.members .stat-icon {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+        }
+
+        .stat-card.partnerships .stat-icon {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success-color);
+        }
+
+        .stat-card.events .stat-icon {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .stat-card.messages .stat-icon {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        .stat-card h3 {
+            font-size: 2.2rem;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            letter-spacing: -0.04em;
+        }
+
+        .stat-card p {
+            color: var(--muted-color);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: var(--surface-gradient);
+            border-radius: 28px;
+            padding: 28px;
+            margin-bottom: 25px;
+            box-shadow: 0 24px 50px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(255,255,255,0.76);
+        }
+
+        .content-card h2 {
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            letter-spacing: -0.03em;
+        }
+
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0;
+        }
+
+        .section-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(15, 118, 110, 0.08);
+            color: var(--primary-color);
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 22px;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.04);
+            font-weight: 700;
+            color: var(--dark-color);
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tr:hover {
+            background: rgba(15, 118, 110, 0.04);
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: all 0.28s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .action-btn.view {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+        }
+
+        .action-btn.edit {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success-color);
+        }
+
+        .action-btn.delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #64748b;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: #f1f5f9;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.96) 100%);
+            padding: 30px;
+            border-radius: 28px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.25);
+            border: 1px solid rgba(255,255,255,0.85);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            color: var(--dark-color);
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            letter-spacing: -0.03em;
+        }
+
+        .modal-close {
+            background: rgba(15, 23, 42, 0.06);
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: #475569;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid rgba(15, 23, 42, 0.1);
+            border-radius: 14px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.92);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+        }
+
+        .recent-activity-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid rgba(15, 23, 42, 0.07);
+        }
+
+        .activity-icon {
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 118, 110, 0.1);
+            color: var(--primary-color);
+        }
+
+        .activity-item strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .activity-item p {
+            color: var(--muted-color);
+            line-height: 1.6;
+        }
+
+        .empty-state {
+            padding: 18px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.72);
+            border: 1px dashed rgba(15, 23, 42, 0.14);
+            color: var(--muted-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 80px;
+            }
+
+            .sidebar-logo h2,
+            .sidebar-logo span,
+            .sidebar-menu span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 18px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 18px;
+                padding: 24px 22px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content-card {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="../assets/images/TeTWIT Logo.png" alt="TeTWIT Logo">
+            <div>
+                <h2>TeTWIT</h2>
+                <span>Admin Panel</span>
+            </div>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#" class="active" data-tab="dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+            <li><a href="#" data-tab="members"><i class="fas fa-users"></i> <span>Members</span></a></li>
+            <li><a href="#" data-tab="partnerships"><i class="fas fa-handshake"></i> <span>Partnerships</span></a></li>
+            <li><a href="#" data-tab="events"><i class="fas fa-calendar-alt"></i> <span>Events</span></a></li>
+            <li><a href="#" data-tab="elections"><i class="fas fa-vote-yea"></i> <span>Elections</span></a></li>
+            <li><a href="#" data-tab="finance"><i class="fas fa-wallet"></i> <span>Finance</span></a></li>
+            <li><a href="#" data-tab="messages"><i class="fas fa-envelope"></i> <span>Messages</span></a></li>
+            <li><a href="../index.html"><i class="fas fa-home"></i> <span>Back to Site</span></a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-copy">
+                <span class="header-badge"><i class="fas fa-shield-halved"></i> TeTWIT Control Center</span>
+                <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+                <p>Manage members, partnerships, elections, finances, and communication from one polished workspace built for fast coordination.</p>
+            </div>
+            <div class="header-actions">
+                <span id="currentDate" class="date-chip"><i class="fas fa-calendar-day"></i> Loading date...</span>
+                <a href="../index.html" class="btn btn-secondary"><i class="fas fa-external-link-alt"></i> View Site</a>
+            </div>
+        </header>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card members">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <h3 id="totalMembers">0</h3>
+                    <p>Total Members</p>
+                </div>
+                <div class="stat-card partnerships">
+                    <div class="stat-icon"><i class="fas fa-handshake"></i></div>
+                    <h3 id="totalPartnerships">0</h3>
+                    <p>Partnership Inquiries</p>
+                </div>
+                <div class="stat-card events">
+                    <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <h3 id="totalEvents">0</h3>
+                    <p>Total Events</p>
+                </div>
+                <div class="stat-card messages">
+                    <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+                    <h3 id="unreadMessages">0</h3>
+                    <p>Unread Messages</p>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="section-head">
+                    <h2 class="section-title"><i class="fas fa-chart-line"></i> Recent Activity</h2>
+                    <span class="section-chip">Live Overview</span>
+                </div>
+                <div id="recentActivity">
+                    <div class="empty-state">Loading recent activity...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Members Tab -->
+        <div id="members" class="tab-content">
+            <div class="content-card">
+                <div class="section-head">
+                    <h2 class="section-title"><i class="fas fa-users"></i> Member Management</h2>
+                    <button class="btn btn-primary" onclick="refreshMembers()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div class="table-container">
+                    <table id="membersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>College</th>
+                                <th>Year</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="membersTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Partnerships Tab -->
+        <div id="partnerships" class="tab-content">
+            <div class="content-card">
+                <div class="section-head">
+                    <h2 class="section-title"><i class="fas fa-handshake"></i> Partnership Inquiries</h2>
+                    <button class="btn btn-primary" onclick="refreshPartnerships()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div class="table-container">
+                    <table id="partnershipsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Organization</th>
+                                <th>Contact</th>
+                                <th>Email</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="partnershipsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Events Tab -->
+        <div id="events" class="tab-content">
+            <div class="content-card">
+                <div class="section-head">
+                    <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Event Management</h2>
+                    <button class="btn btn-primary" onclick="openEventModal()"><i class="fas fa-plus"></i> Create Event</button>
+                </div>
+                <div class="table-container">
+                    <table id="eventsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Type</th>
+                                <th>Location</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="eventsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Elections Tab -->
+        <div id="elections" class="tab-content">
+            <div class="content-card">
+                <div class="section-head">
+                    <h2 class="section-title"><i class="fas fa-vote-yea"></i> Election Management</h2>
+                    <button class="btn btn-primary" onclick="openElectionModal()"><i class="fas fa-plus"></i> Create Election</button>
+                </div>
+                <div class="table-container">
+                    <table id="electionsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Position</th>
+                                <th>Level</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="electionsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Finance Tab -->
+        <div id="finance" class="tab-content">
+            <div class="stats-grid">
+                <div class="stat-card members">
+                    <div class="stat-icon"><i class="fas fa-arrow-up"></i></div>
+                    <h3 id="totalIncome">GH₵0</h3>
+                    <p>Total Income</p>
+                </div>
+                <div class="stat-card events">
+                    <div class="stat-icon"><i class="fas fa-arrow-down"></i></div>
+                    <h3 id="totalExpenses">GH₵0</h3>
+                    <p>Total Expenses</p>
+                </div>
+                <div class="stat-card partnerships">
+                    <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                    <h3 id="balance">GH₵0</h3>
+                    <p>Current Balance</p>
+                </div>
+            </div>
+            <div class="content-card">
+                <div class="section-head">
+                    <h2 class="section-title"><i class="fas fa-list"></i> Transactions</h2>
+                    <button class="btn btn-primary" onclick="openTransactionModal()"><i class="fas fa-plus"></i> Add Transaction</button>
+                </div>
+                <div class="table-container">
+                    <table id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages Tab -->
+        <div id="messages" class="tab-content">
+            <div class="content-card">
+                <div class="section-head">
+                    <h2 class="section-title"><i class="fas fa-envelope"></i> Contact Messages</h2>
+                    <button class="btn btn-primary" onclick="refreshMessages()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div class="table-container">
+                    <table id="messagesTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Subject</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messagesTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Event Modal -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Event</h3>
+                <button class="modal-close" onclick="closeEventModal()">&times;</button>
+            </div>
+            <form id="eventForm">
+                <div class="form-group">
+                    <label>Event Title *</label>
+                    <input type="text" name="title" required placeholder="Enter event title">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="3" placeholder="Event description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Event Type *</label>
+                    <select name="event_type" required>
+                        <option value="">Select type</option>
+                        <option value="Tech Meetup">Tech Meetup</option>
+                        <option value="Workshop">Workshop</option>
+                        <option value="Hackathon">Hackathon</option>
+                        <option value="Summit">Summit</option>
+                        <option value="Digital Inclusion Week">Digital Inclusion Week</option>
+                        <option value="Mentorship Session">Mentorship Session</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" name="location" placeholder="Event location">
+                </div>
+                <div class="form-group">
+                    <label>Event Date *</label>
+                    <input type="datetime-local" name="event_date" required>
+                </div>
+                <div class="form-group">
+                    <label>Registration Deadline</label>
+                    <input type="datetime-local" name="registration_deadline">
+                </div>
+                <div class="form-group">
+                    <label>Max Participants</label>
+                    <input type="number" name="max_participants" placeholder="Leave empty for unlimited">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fas fa-save"></i> Create Event</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Election Modal -->
+    <div id="electionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Election</h3>
+                <button class="modal-close" onclick="closeElectionModal()">&times;</button>
+            </div>
+            <form id="electionForm">
+                <div class="form-group">
+                    <label>Election Title *</label>
+                    <input type="text" name="title" required placeholder="Enter election title">
+                </div>
+                <div class="form-group">
+                    <label>Position *</label>
+                    <input type="text" name="position" required placeholder="e.g., President, Secretary">
+                </div>
+                <div class="form-group">
+                    <label>College (for campus-level)</label>
+                    <input type="text" name="college" placeholder="Leave empty for national/zonal">
+                </div>
+                <div class="form-group">
+                    <label>Zone</label>
+                    <select name="zone">
+                        <option value="">Select zone (if applicable)</option>
+                        <option value="Northern">Northern Zone</option>
+                        <option value="Middle">Middle Zone</option>
+                        <option value="Southern">Southern Zone</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Level *</label>
+                    <select name="level" required>
+                        <option value="">Select level</option>
+                        <option value="campus">Campus</option>
+                        <option value="zonal">Zonal</option>
+                        <option value="national">National</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Start Date *</label>
+                    <input type="datetime-local" name="start_date" required>
+                </div>
+                <div class="form-group">
+                    <label>End Date *</label>
+                    <input type="datetime-local" name="end_date" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fas fa-save"></i> Create Election</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Transaction Modal -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Transaction</h3>
+                <button class="modal-close" onclick="closeTransactionModal()">&times;</button>
+            </div>
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label>Transaction Type *</label>
+                    <select name="type" required>
+                        <option value="">Select type</option>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Category *</label>
+                    <select name="category" required>
+                        <option value="">Select category</option>
+                        <option value="Membership Dues">Membership Dues</option>
+                        <option value="Sponsorship">Sponsorship</option>
+                        <option value="Donation">Donation</option>
+                        <option value="Event Fees">Event Fees</option>
+                        <option value="Equipment">Equipment</option>
+                        <option value="Venue">Venue</option>
+                        <option value="Catering">Catering</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Materials">Materials</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Amount (GH₵) *</label>
+                    <input type="number" name="amount" step="0.01" required placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="3" placeholder="Transaction description"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fas fa-save"></i> Add Transaction</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Modal -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="viewModalTitle">Details</h3>
+                <button class="modal-close" onclick="closeViewModal()">&times;</button>
+            </div>
+            <div id="viewModalContent">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '';
+        let currentAdmin = null;
+
+        function getToken() {
+            return localStorage.getItem('tetwit_token');
+        }
+
+        function clearSession() {
+            localStorage.removeItem('tetwit_token');
+            localStorage.removeItem('tetwit_user');
+        }
+
+        function redirectToLogin() {
+            clearSession();
+            window.location.href = '/pages/login.html';
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function safeText(value, fallback = '-') {
+            const normalized = value === null || value === undefined || value === '' ? fallback : value;
+            return escapeHtml(normalized);
+        }
+
+        function formatDate(value, includeTime = false) {
+            if (!value) return '-';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return '-';
+            return escapeHtml(includeTime ? date.toLocaleString() : date.toLocaleDateString());
+        }
+
+        function statusBadge(status) {
+            const normalized = String(status || 'unknown').toLowerCase();
+            const safeClass = normalized.replace(/[^a-z0-9_-]/g, '');
+            return `<span class="status-badge status-${safeClass}">${escapeHtml(status || 'unknown')}</span>`;
+        }
+
+        async function apiFetch(path, options = {}) {
+            const token = getToken();
+            if (!token) {
+                redirectToLogin();
+                throw new Error('Missing authentication token');
+            }
+
+            const headers = {
+                ...(options.headers || {}),
+                Authorization: `Bearer ${token}`
+            };
+
+            if (options.body && !headers['Content-Type']) {
+                headers['Content-Type'] = 'application/json';
+            }
+
+            const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
+
+            if (response.status === 401 || response.status === 403) {
+                redirectToLogin();
+                throw new Error('Unauthorized');
+            }
+
+            return response;
+        }
+
+        function setCurrentDate() {
+            const now = new Date();
+            document.getElementById('currentDate').innerHTML = `<i class="fas fa-calendar-day"></i> ${escapeHtml(now.toLocaleDateString('en-GB', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }))}`;
+        }
+
+        function setupNavigation() {
+            document.querySelectorAll('.sidebar-menu a[data-tab]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const tab = link.dataset.tab;
+
+                    document.querySelectorAll('.sidebar-menu a').forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+
+                    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                    document.getElementById(tab).classList.add('active');
+
+                    loadTabData(tab);
+                });
+            });
+        }
+
+        function loadTabData(tab) {
+            switch (tab) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'members':
+                    loadMembers();
+                    break;
+                case 'partnerships':
+                    loadPartnerships();
+                    break;
+                case 'events':
+                    loadEvents();
+                    break;
+                case 'elections':
+                    loadElections();
+                    break;
+                case 'finance':
+                    loadFinance();
+                    break;
+                case 'messages':
+                    loadMessages();
+                    break;
+            }
+        }
+
+        function openViewModal(title, content) {
+            document.getElementById('viewModalTitle').textContent = title;
+            document.getElementById('viewModalContent').innerHTML = content;
+            document.getElementById('viewModal').classList.add('active');
+        }
+
+        function renderDetailRows(rows) {
+            return rows.map(row => `<p><strong>${escapeHtml(row.label)}:</strong> ${row.value}</p>`).join('');
+        }
+
+        function renderActivityItems(items) {
+            return `<div class="recent-activity-list">${items.map(item => `
+                <div class="activity-item">
+                    <span class="activity-icon"><i class="${escapeHtml(item.icon)}"></i></span>
+                    <div>
+                        <strong>${escapeHtml(item.title)}</strong>
+                        <p>${item.text}</p>
+                    </div>
+                </div>
+            `).join('')}</div>`;
+        }
+
+        async function verifyAdminAccess() {
+            const storedUser = JSON.parse(localStorage.getItem('tetwit_user') || 'null');
+            if (!storedUser || storedUser.role !== 'admin') {
+                redirectToLogin();
+                return false;
+            }
+
+            const response = await apiFetch('/api/auth/me');
+            const result = await response.json();
+
+            if (!result.success || result.data.role !== 'admin') {
+                redirectToLogin();
+                return false;
+            }
+
+            currentAdmin = result.data;
+            return true;
+        }
+
+        async function loadDashboard() {
+            try {
+                const response = await apiFetch('/api/dashboard');
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('totalMembers').textContent = data.data.total_members;
+                    document.getElementById('totalPartnerships').textContent = data.data.total_partnerships;
+                    document.getElementById('totalEvents').textContent = data.data.total_events;
+                    document.getElementById('unreadMessages').textContent = data.data.unread_messages;
+                    document.getElementById('recentActivity').innerHTML = renderActivityItems([
+                        {
+                            icon: 'fas fa-user-shield',
+                            title: 'Signed in admin',
+                            text: safeText(`${currentAdmin.first_name} ${currentAdmin.last_name}`)
+                        },
+                        {
+                            icon: 'fas fa-layer-group',
+                            title: 'Access level',
+                            text: safeText(`${currentAdmin.role} account with ${currentAdmin.status || 'active'} status`)
+                        },
+                        {
+                            icon: 'fas fa-arrows-rotate',
+                            title: 'Workspace refreshed',
+                            text: escapeHtml(`Last synced on ${new Date().toLocaleString()}`)
+                        }
+                    ]);
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        async function loadMembers() {
+            try {
+                const response = await apiFetch('/api/members');
+                const data = await response.json();
+
+                if (data.success) {
+                    const tbody = document.getElementById('membersTableBody');
+                    tbody.innerHTML = data.data.map(member => `
+                        <tr>
+                            <td>${escapeHtml(member.id)}</td>
+                            <td>${safeText(`${member.first_name} ${member.last_name}`)}</td>
+                            <td>${safeText(member.email)}</td>
+                            <td>${safeText(member.college)}</td>
+                            <td>${safeText(member.year_of_study)}</td>
+                            <td>${statusBadge(member.status)}</td>
+                            <td>${formatDate(member.created_at)}</td>
+                            <td class="action-btns">
+                                <button class="action-btn view" onclick="viewMember(${Number(member.id)})">View</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading members:', error);
+            }
+        }
+
+        async function loadPartnerships() {
+            try {
+                const response = await apiFetch('/api/partnerships');
+                const data = await response.json();
+
+                if (data.success) {
+                    const tbody = document.getElementById('partnershipsTableBody');
+                    tbody.innerHTML = data.data.map(item => `
+                        <tr>
+                            <td>${escapeHtml(item.id)}</td>
+                            <td>${safeText(item.organization_name)}</td>
+                            <td>${safeText(item.contact_person)}</td>
+                            <td>${safeText(item.email)}</td>
+                            <td>${safeText(item.partnership_type)}</td>
+                            <td>${statusBadge(item.status)}</td>
+                            <td>${formatDate(item.created_at)}</td>
+                            <td class="action-btns">
+                                <button class="action-btn view" onclick="viewPartnership(${Number(item.id)})">View</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading partnerships:', error);
+            }
+        }
+
+        async function loadEvents() {
+            try {
+                const response = await apiFetch('/api/events');
+                const data = await response.json();
+
+                if (data.success) {
+                    const tbody = document.getElementById('eventsTableBody');
+                    tbody.innerHTML = data.data.map(event => `
+                        <tr>
+                            <td>${escapeHtml(event.id)}</td>
+                            <td>${safeText(event.title)}</td>
+                            <td>${safeText(event.event_type)}</td>
+                            <td>${safeText(event.location)}</td>
+                            <td>${formatDate(event.event_date)}</td>
+                            <td>${statusBadge(event.status)}</td>
+                            <td class="action-btns">
+                                <button class="action-btn view" onclick="viewEvent(${Number(event.id)})">View</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading events:', error);
+            }
+        }
+
+        async function loadElections() {
+            try {
+                const response = await apiFetch('/api/elections');
+                const data = await response.json();
+
+                if (data.success) {
+                    const tbody = document.getElementById('electionsTableBody');
+                    tbody.innerHTML = data.data.map(election => `
+                        <tr>
+                            <td>${escapeHtml(election.id)}</td>
+                            <td>${safeText(election.title)}</td>
+                            <td>${safeText(election.position)}</td>
+                            <td>${safeText(election.level)}</td>
+                            <td>${formatDate(election.start_date)}</td>
+                            <td>${formatDate(election.end_date)}</td>
+                            <td>${statusBadge(election.status)}</td>
+                            <td class="action-btns">
+                                <button class="action-btn view" onclick="viewElection(${Number(election.id)})">View</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading elections:', error);
+            }
+        }
+
+        async function loadFinance() {
+            try {
+                const response = await apiFetch('/api/transactions/summary');
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('totalIncome').textContent = `GH₵${data.data.total_income.toFixed(2)}`;
+                    document.getElementById('totalExpenses').textContent = `GH₵${data.data.total_expenses.toFixed(2)}`;
+                    document.getElementById('balance').textContent = `GH₵${data.data.balance.toFixed(2)}`;
+                    document.getElementById('transactionsTableBody').innerHTML = data.data.by_category.map(item => `
+                        <tr>
+                            <td>-</td>
+                            <td>${safeText(item.type)}</td>
+                            <td>${safeText(item.category)}</td>
+                            <td>GH₵${Number(item.total || 0).toFixed(2)}</td>
+                            <td>Category summary</td>
+                            <td>-</td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading finance:', error);
+            }
+        }
+
+        async function loadMessages() {
+            try {
+                const response = await apiFetch('/api/contact');
+                const data = await response.json();
+
+                if (data.success) {
+                    const tbody = document.getElementById('messagesTableBody');
+                    tbody.innerHTML = data.data.map(message => `
+                        <tr>
+                            <td>${escapeHtml(message.id)}</td>
+                            <td>${safeText(message.name)}</td>
+                            <td>${safeText(message.email)}</td>
+                            <td>${safeText(message.subject)}</td>
+                            <td>${statusBadge(message.status)}</td>
+                            <td>${formatDate(message.created_at)}</td>
+                            <td class="action-btns">
+                                <button class="action-btn view" onclick="viewMessage(${Number(message.id)})">View</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading messages:', error);
+            }
+        }
+
+        function refreshMembers() { loadMembers(); }
+        function refreshPartnerships() { loadPartnerships(); }
+        function refreshMessages() { loadMessages(); }
+
+        function openEventModal() {
+            document.getElementById('eventModal').classList.add('active');
+        }
+
+        function closeEventModal() {
+            document.getElementById('eventModal').classList.remove('active');
+            document.getElementById('eventForm').reset();
+        }
+
+        function openElectionModal() {
+            document.getElementById('electionModal').classList.add('active');
+        }
+
+        function closeElectionModal() {
+            document.getElementById('electionModal').classList.remove('active');
+            document.getElementById('electionForm').reset();
+        }
+
+        function openTransactionModal() {
+            document.getElementById('transactionModal').classList.add('active');
+        }
+
+        function closeTransactionModal() {
+            document.getElementById('transactionModal').classList.remove('active');
+            document.getElementById('transactionForm').reset();
+        }
+
+        function closeViewModal() {
+            document.getElementById('viewModal').classList.remove('active');
+        }
+
+        async function viewMember(id) {
+            try {
+                const response = await apiFetch(`/api/members/${id}`);
+                const data = await response.json();
+                if (!data.success) return;
+
+                const member = data.data;
+                openViewModal('Member Details', renderDetailRows([
+                    { label: 'Name', value: safeText(`${member.first_name} ${member.last_name}`) },
+                    { label: 'Email', value: safeText(member.email) },
+                    { label: 'Phone', value: safeText(member.phone) },
+                    { label: 'College', value: safeText(member.college) },
+                    { label: 'Program', value: safeText(member.program) },
+                    { label: 'Year of Study', value: safeText(member.year_of_study) },
+                    { label: 'Skills', value: safeText(member.skills) },
+                    { label: 'Interests', value: safeText(member.interests) },
+                    { label: 'Status', value: statusBadge(member.status) },
+                    { label: 'Joined', value: formatDate(member.created_at, true) }
+                ]));
+            } catch (error) {
+                console.error('Error viewing member:', error);
+            }
+        }
+
+        async function viewPartnership(id) {
+            try {
+                const response = await apiFetch('/api/partnerships');
+                const data = await response.json();
+                const item = data.success ? data.data.find(entry => entry.id === id) : null;
+                if (!item) return;
+
+                openViewModal('Partnership Details', renderDetailRows([
+                    { label: 'Organization', value: safeText(item.organization_name) },
+                    { label: 'Contact Person', value: safeText(item.contact_person) },
+                    { label: 'Email', value: safeText(item.email) },
+                    { label: 'Phone', value: safeText(item.phone) },
+                    { label: 'Type', value: safeText(item.partnership_type) },
+                    { label: 'Message', value: safeText(item.message) },
+                    { label: 'Status', value: statusBadge(item.status) },
+                    { label: 'Submitted', value: formatDate(item.created_at, true) }
+                ]));
+            } catch (error) {
+                console.error('Error viewing partnership:', error);
+            }
+        }
+
+        async function viewEvent(id) {
+            try {
+                const response = await apiFetch('/api/events');
+                const data = await response.json();
+                const event = data.success ? data.data.find(entry => entry.id === id) : null;
+                if (!event) return;
+
+                openViewModal('Event Details', renderDetailRows([
+                    { label: 'Title', value: safeText(event.title) },
+                    { label: 'Type', value: safeText(event.event_type) },
+                    { label: 'Description', value: safeText(event.description) },
+                    { label: 'Location', value: safeText(event.location) },
+                    { label: 'Date', value: formatDate(event.event_date, true) },
+                    { label: 'Registration Deadline', value: formatDate(event.registration_deadline, true) },
+                    { label: 'Max Participants', value: safeText(event.max_participants || 'Unlimited') },
+                    { label: 'Status', value: statusBadge(event.status) }
+                ]));
+            } catch (error) {
+                console.error('Error viewing event:', error);
+            }
+        }
+
+        async function viewElection(id) {
+            try {
+                const response = await apiFetch('/api/elections');
+                const data = await response.json();
+                const election = data.success ? data.data.find(entry => entry.id === id) : null;
+                if (!election) return;
+
+                openViewModal('Election Details', renderDetailRows([
+                    { label: 'Title', value: safeText(election.title) },
+                    { label: 'Position', value: safeText(election.position) },
+                    { label: 'College', value: safeText(election.college || 'N/A') },
+                    { label: 'Zone', value: safeText(election.zone || 'N/A') },
+                    { label: 'Level', value: safeText(election.level) },
+                    { label: 'Start Date', value: formatDate(election.start_date, true) },
+                    { label: 'End Date', value: formatDate(election.end_date, true) },
+                    { label: 'Status', value: statusBadge(election.status) }
+                ]));
+            } catch (error) {
+                console.error('Error viewing election:', error);
+            }
+        }
+
+        async function viewMessage(id) {
+            try {
+                const response = await apiFetch('/api/contact');
+                const data = await response.json();
+                const message = data.success ? data.data.find(entry => entry.id === id) : null;
+                if (!message) return;
+
+                openViewModal('Message Details', renderDetailRows([
+                    { label: 'Name', value: safeText(message.name) },
+                    { label: 'Email', value: safeText(message.email) },
+                    { label: 'Subject', value: safeText(message.subject) },
+                    { label: 'Message', value: safeText(message.message) },
+                    { label: 'Status', value: statusBadge(message.status) },
+                    { label: 'Received', value: formatDate(message.created_at, true) }
+                ]));
+            } catch (error) {
+                console.error('Error viewing message:', error);
+            }
+        }
+
+        document.getElementById('eventForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await apiFetch('/api/events', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Event created successfully!');
+                    closeEventModal();
+                    loadEvents();
+                } else {
+                    alert(`Error: ${result.message}`);
+                }
+            } catch (error) {
+                alert('Error creating event');
+            }
+        });
+
+        document.getElementById('electionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await apiFetch('/api/elections', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Election created successfully!');
+                    closeElectionModal();
+                    loadElections();
+                } else {
+                    alert(`Error: ${result.message}`);
+                }
+            } catch (error) {
+                alert('Error creating election');
+            }
+        });
+
+        document.getElementById('transactionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await apiFetch('/api/transactions', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Transaction added successfully!');
+                    closeTransactionModal();
+                    loadFinance();
+                } else {
+                    alert(`Error: ${result.message}`);
+                }
+            } catch (error) {
+                alert('Error adding transaction');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            setCurrentDate();
+            setupNavigation();
+
+            try {
+                const hasAccess = await verifyAdminAccess();
+                if (hasAccess) {
+                    loadDashboard();
+                }
+            } catch (error) {
+                console.error('Admin access verification failed:', error);
+            }
+        });
+    </script>
+</body>
+</html>
