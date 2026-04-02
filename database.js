@@ -47,6 +47,7 @@ db.exec(`
     failed_attempts INTEGER DEFAULT 0,
     locked_until DATETIME,
     last_login DATETIME,
+    role TEXT DEFAULT 'member',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
