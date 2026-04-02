@@ -40,4 +40,10 @@ async function setupAdmin() {
   }
 }
 
-setupAdmin();
+// Export for use in server.js
+module.exports = setupAdmin;
+
+// Also run if called directly
+if (require.main === module) {
+  setupAdmin();
+}

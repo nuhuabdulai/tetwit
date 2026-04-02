@@ -1050,6 +1050,26 @@
                 headers.Authorization = `Bearer ${token}`;
             }
 
+            // Add CSRF token for state-changing operations
+            const method = (options.method || 'GET').toUpperCase();
+            const unsafeMethods = ['POST', 'PUT', 'DELETE', 'PATCH'];
+            if (unsafeMethods.includes(method)) {
+                // Fetch CSRF token if not already provided
+                if (!headers['X-CSRF-Token']) {
+                    try {
+                        const csrfResponse = await fetch(`${API_BASE}/api/csrf-token`, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        });
+                        const csrfData = await csrfResponse.json();
+                        if (csrfData.csrfToken) {
+                            headers['X-CSRF-Token'] = csrfData.csrfToken;
+                        }
+                    } catch (error) {
+                        console.error('Failed to fetch CSRF token:', error);
+                    }
+                }
+            }
+
             if (options.body && !headers['Content-Type']) {
                 headers['Content-Type'] = 'application/json';
             }
@@ -1553,8 +1573,25 @@
             window.location.href = '/pages/login.html';
         }
 
+        // Session timeout - 30 minutes of inactivity
+        let sessionTimeout;
+        const resetSessionTimeout = () => {
+          clearTimeout(sessionTimeout);
+          sessionTimeout = setTimeout(() => {
+            localStorage.removeItem('tetwit_token');
+            localStorage.removeItem('tetwit_user');
+            window.location.href = 'login.html?reason=timeout';
+          }, 30 * 60 * 1000); // 30 minutes
+        };
+
+        // Reset timeout on user activity
+        ['click', 'mousemove', 'keypress', 'scroll'].forEach(event => {
+          document.addEventListener(event, resetSessionTimeout);
+        });
+
         document.addEventListener('DOMContentLoaded', async () => {
             try {
+                resetSessionTimeout(); // Start timeout timer
                 await loadUserData();
                 await loadEvents();
                 await loadElections();

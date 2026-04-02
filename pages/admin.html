@@ -776,7 +776,21 @@
             <div class="content-card">
                 <div class="section-head">
                     <h2 class="section-title"><i class="fas fa-users"></i> Member Management</h2>
-                    <button class="btn btn-primary" onclick="refreshMembers()"><i class="fas fa-sync"></i> Refresh</button>
+                    <div style="display: flex; gap: 12px;">
+                        <input type="text" id="member-search" placeholder="Search members..." onkeyup="filterMembers()" style="padding: 10px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.9rem;">
+                        <select id="member-filter" onchange="filterMembers()" style="padding: 10px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.9rem;">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="pending">Pending</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                        <select id="member-role-filter" onchange="filterMembers()" style="padding: 10px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.9rem;">
+                            <option value="">All Roles</option>
+                            <option value="admin">Admin</option>
+                            <option value="member">Member</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="refreshMembers()"><i class="fas fa-sync"></i> Refresh</button>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table id="membersTable">
@@ -786,7 +800,7 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>College</th>
-                                <th>Year</th>
+                                <th>Role</th>
                                 <th>Status</th>
                                 <th>Joined</th>
                                 <th>Actions</th>
@@ -795,6 +809,10 @@
                         <tbody id="membersTableBody">
                         </tbody>
                     </table>
+                    <div id="members-count" style="margin-top: 16px; padding: 12px; background: #f8fafc; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <span id="total-members">Total: 0 members</span>
+                        <span id="filtered-members">Showing: 0</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -946,6 +964,41 @@
                             </tr>
                         </thead>
                         <tbody id="messagesTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Database Management Tab -->
+        <div id="database" class="tab-content">
+            <div class="content-card">
+                <div class="section-head">
+                    <h2 class="section-title"><i class="fas fa-database"></i> Database Management</h2>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn btn-primary" onclick="exportDatabase()"><i class="fas fa-download"></i> Export Full Database</button>
+                        <button class="btn btn-secondary" onclick="exportMembers()"><i class="fas fa-file-csv"></i> Export Members (CSV)</button>
+                        <button class="btn btn-secondary" onclick="exportEvents()"><i class="fas fa-file-csv"></i> Export Events (CSV)</button>
+                        <button class="btn btn-danger" onclick="confirmClearDatabase()"><i class="fas fa-trash"></i> Clear Test Data</button>
+                    </div>
+                </div>
+                <div class="alert alert-info" style="margin: 20px 0;">
+                    <i class="fas fa-info-circle"></i> <strong>Database Statistics:</strong> View database size, table counts, and perform maintenance operations.
+                </div>
+                <div id="database-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                    <!-- Stats will be loaded here -->
+                </div>
+                <div class="table-container">
+                    <table id="dataPreviewTable">
+                        <thead>
+                            <tr>
+                                <th>Table</th>
+                                <th>Records</th>
+                                <th>Size (approx)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataPreviewBody">
                         </tbody>
                     </table>
                 </div>
@@ -1167,6 +1220,26 @@
                 Authorization: `Bearer ${token}`
             };
 
+            // Add CSRF token for state-changing operations
+            const method = (options.method || 'GET').toUpperCase();
+            const unsafeMethods = ['POST', 'PUT', 'DELETE', 'PATCH'];
+            if (unsafeMethods.includes(method)) {
+                // Fetch CSRF token if not already provided
+                if (!headers['X-CSRF-Token']) {
+                    try {
+                        const csrfResponse = await fetch(`${API_BASE}/api/csrf-token`, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        });
+                        const csrfData = await csrfResponse.json();
+                        if (csrfData.csrfToken) {
+                            headers['X-CSRF-Token'] = csrfData.csrfToken;
+                        }
+                    } catch (error) {
+                        console.error('Failed to fetch CSRF token:', error);
+                    }
+                }
+            }
+
             if (options.body && !headers['Content-Type']) {
                 headers['Content-Type'] = 'application/json';
             }
@@ -1230,6 +1303,9 @@
                     break;
                 case 'messages':
                     loadMessages();
+                    break;
+                case 'database':
+                    loadDatabaseStats();
                     break;
             }
         }
@@ -1308,31 +1384,157 @@
             }
         }
 
+        let allMembers = [];
+
         async function loadMembers() {
             try {
                 const response = await apiFetch('/api/members');
                 const data = await response.json();
 
                 if (data.success) {
-                    const tbody = document.getElementById('membersTableBody');
-                    tbody.innerHTML = data.data.map(member => `
-                        <tr>
-                            <td>${escapeHtml(member.id)}</td>
-                            <td>${safeText(`${member.first_name} ${member.last_name}`)}</td>
-                            <td>${safeText(member.email)}</td>
-                            <td>${safeText(member.college)}</td>
-                            <td>${safeText(member.year_of_study)}</td>
-                            <td>${statusBadge(member.status)}</td>
-                            <td>${formatDate(member.created_at)}</td>
-                            <td class="action-btns">
-                                <button class="action-btn view" onclick="viewMember(${Number(member.id)})">View</button>
-                            </td>
-                        </tr>
-                    `).join('');
+                    allMembers = data.data;
+                    displayMembers(allMembers);
+                    document.getElementById('total-members').textContent = `Total: ${allMembers.length} members`;
                 }
             } catch (error) {
                 console.error('Error loading members:', error);
+                showNotification('Error loading members', 'error');
             }
+        }
+
+        function displayMembers(members) {
+            const tbody = document.getElementById('membersTableBody');
+            
+            if (members.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: #64748b;">
+                            <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                            <p>No members found</p>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('filtered-members').textContent = 'Showing: 0';
+                return;
+            }
+
+            tbody.innerHTML = members.map(member => `
+                <tr style="transition: background 0.2s;">
+                    <td><strong>#${member.id}</strong></td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #0f766e, #14b8a6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.875rem;">
+                                ${(member.first_name || 'U')[0]}${(member.last_name || '')[0] || ''}
+                            </div>
+                            <div>
+                                <strong style="color: #0f172a;">${safeText(`${member.first_name || ''} ${member.last_name || ''}`).trim() || 'N/A'}</strong>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${safeText(member.email)}</td>
+                    <td>${safeText(member.college || 'N/A')}</td>
+                    <td>
+                        <span style="padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; ${member.role === 'admin' ? 'background: #dcfce7; color: #15803d;' : 'background: #f1f5f9; color: #475569;'}">
+                            ${member.role === 'admin' ? '<i class="fas fa-shield-alt"></i>' : '<i class="fas fa-user"></i>'} ${member.role || 'member'}
+                        </span>
+                    </td>
+                    <td>${statusBadge(member.status)}</td>
+                    <td>${formatDate(member.created_at)}</td>
+                    <td class="action-btns">
+                        <button class="action-btn view" onclick="viewMember(${Number(member.id)})" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        ${member.id !== getCurrentUserId() ? `
+                            <button class="action-btn delete" onclick="deleteMember(${Number(member.id)}, '${escapeHtml(member.first_name || 'Unknown')}')" title="Delete Member" style="background: #fee2e2; color: #dc2626;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        ` : '<span style="color: #94a3b8; font-size: 0.75rem;">Current User</span>'}
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('filtered-members').textContent = `Showing: ${members.length} of ${allMembers.length}`;
+        }
+
+        function filterMembers() {
+            const search = document.getElementById('member-search').value.toLowerCase();
+            const statusFilter = document.getElementById('member-filter').value;
+            const roleFilter = document.getElementById('member-role-filter').value;
+
+            const filtered = allMembers.filter(member => {
+                const matchesSearch = !search || 
+                    `${member.first_name || ''} ${member.last_name || ''}`.toLowerCase().includes(search) ||
+                    (member.email || '').toLowerCase().includes(search) ||
+                    (member.college || '').toLowerCase().includes(search);
+                
+                const matchesStatus = !statusFilter || member.status === statusFilter;
+                const matchesRole = !roleFilter || member.role === roleFilter;
+
+                return matchesSearch && matchesStatus && matchesRole;
+            });
+
+            displayMembers(filtered);
+        }
+
+        function getCurrentUserId() {
+            try {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    return payload.id;
+                }
+            } catch (e) {}
+            return null;
+        }
+
+        async function deleteMember(id, name) {
+            if (!confirm(`Are you sure you want to delete member "${name}"?\n\nThis action cannot be undone!`)) {
+                return;
+            }
+
+            try {
+                const response = await apiFetch(`/api/members/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification(`Member "${name}" deleted successfully!`, 'success');
+                    loadMembers();
+                    loadDashboard();
+                } else {
+                    showNotification(data.message || 'Failed to delete member', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting member:', error);
+                showNotification('Error deleting member. Please try again.', 'error');
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 16px 24px;
+                border-radius: 12px;
+                color: white;
+                font-weight: 600;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                ${type === 'success' ? 'background: linear-gradient(135deg, #15803d, #22c55e);' : 'background: linear-gradient(135deg, #dc2626, #ef4444);'}
+            `;
+            notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
         }
 
         async function loadPartnerships() {
@@ -1683,9 +1885,218 @@
             }
         });
 
+        // Session timeout - 30 minutes of inactivity
+        let sessionTimeout;
+        const resetSessionTimeout = () => {
+          clearTimeout(sessionTimeout);
+          sessionTimeout = setTimeout(() => {
+            localStorage.removeItem('tetwit_token');
+            localStorage.removeItem('tetwit_user');
+            window.location.href = 'login.html?reason=timeout';
+          }, 30 * 60 * 1000); // 30 minutes
+        };
+
+        // Reset timeout on user activity
+        ['click', 'mousemove', 'keypress', 'scroll'].forEach(event => {
+          document.addEventListener(event, resetSessionTimeout);
+        });
+
+        // Database Management Functions
+        async function loadDatabaseStats() {
+          try {
+            const response = await apiFetch('/api/admin/database-stats');
+            const data = await response.json();
+            
+            if (data.success) {
+              const statsDiv = document.getElementById('database-stats');
+              statsDiv.innerHTML = `
+                <div class="stat-card">
+                  <div class="stat-value">${data.data.total_members}</div>
+                  <div class="stat-label">Total Members</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">${data.data.total_events}</div>
+                  <div class="stat-label">Total Events</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">${data.data.total_transactions}</div>
+                  <div class="stat-label">Transactions</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">${data.data.total_messages}</div>
+                  <div class="stat-label">Contact Messages</div>
+                </div>
+              `;
+
+              const tbody = document.getElementById('dataPreviewBody');
+              tbody.innerHTML = data.data.tables.map(table => `
+                <tr>
+                  <td>${safeText(table.name)}</td>
+                  <td>${table.count}</td>
+                  <td>${table.size}</td>
+                  <td>
+                    <button class="action-btn view" onclick="exportTable('${table.name}')">Export</button>
+                  </td>
+                </tr>
+              `).join('');
+            }
+          } catch (error) {
+            console.error('Error loading database stats:', error);
+          }
+        }
+
+        async function exportDatabase() {
+          try {
+            const response = await apiFetch('/api/admin/export-database', {
+              method: 'POST'
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+              const blob = new Blob([data.content], { type: 'text/plain' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `tetwit-database-${new Date().toISOString().split('T')[0]}.sql`;
+              a.click();
+              URL.revokeObjectURL(url);
+              showNotification('Database exported successfully!', 'success');
+            } else {
+              alert(`Error: ${data.message}`);
+            }
+          } catch (error) {
+            alert('Error exporting database');
+          }
+        }
+
+        async function exportMembers() {
+          try {
+            const response = await apiFetch('/api/admin/export-members');
+            const data = await response.json();
+            
+            if (data.success) {
+              const blob = new Blob([data.content], { type: 'text/csv' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `members-${new Date().toISOString().split('T')[0]}.csv`;
+              a.click();
+              URL.revokeObjectURL(url);
+              showNotification('Members exported successfully!', 'success');
+            } else {
+              alert(`Error: ${data.message}`);
+            }
+          } catch (error) {
+            alert('Error exporting members');
+          }
+        }
+
+        async function exportEvents() {
+          try {
+            const response = await apiFetch('/api/admin/export-events');
+            const data = await response.json();
+            
+            if (data.success) {
+              const blob = new Blob([data.content], { type: 'text/csv' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `events-${new Date().toISOString().split('T')[0]}.csv`;
+              a.click();
+              URL.revokeObjectURL(url);
+              showNotification('Events exported successfully!', 'success');
+            } else {
+              alert(`Error: ${data.message}`);
+            }
+          } catch (error) {
+            alert('Error exporting events');
+          }
+        }
+
+        async function exportTable(tableName) {
+          try {
+            const response = await apiFetch(`/api/admin/export-table/${tableName}`, {
+              method: 'POST'
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+              const blob = new Blob([data.content], { type: 'text/csv' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `${tableName}-${new Date().toISOString().split('T')[0]}.csv`;
+              a.click();
+              URL.revokeObjectURL(url);
+              showNotification(`${tableName} exported successfully!`, 'success');
+            } else {
+              alert(`Error: ${data.message}`);
+            }
+          } catch (error) {
+            alert(`Error exporting ${tableName}`);
+          }
+        }
+
+        function confirmClearDatabase() {
+          if (confirm('⚠️  Are you sure you want to clear all test data? This will remove:\n\n• Test members (non-admin accounts)\n• Empty/invalid records\n• But preserve admin account and important data\n\nThis action cannot be undone!')) {
+            clearTestData();
+          }
+        }
+
+        async function clearTestData() {
+          try {
+            const response = await apiFetch('/api/admin/clear-test-data', {
+              method: 'POST'
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+              alert(`✅ ${data.message}\n\nRecords removed: ${data.removed_count}`);
+              loadDatabaseStats(); // Refresh stats
+              showNotification('Test data cleared successfully!', 'success');
+            } else {
+              alert(`Error: ${data.message}`);
+            }
+          } catch (error) {
+            alert('Error clearing test data');
+          }
+        }
+
+        function showNotification(message, type = 'info') {
+          // Create notification element if it doesn't exist
+          let notification = document.getElementById('notification');
+          if (!notification) {
+            notification = document.createElement('div');
+            notification.id = 'notification';
+            notification.style.cssText = `
+              position: fixed;
+              top: 20px;
+              right: 20px;
+              padding: 16px 24px;
+              border-radius: 8px;
+              color: white;
+              font-weight: 500;
+              z-index: 10000;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+              transition: all 0.3s ease;
+            `;
+            document.body.appendChild(notification);
+          }
+          
+          notification.textContent = message;
+          notification.style.background = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6';
+          notification.style.display = 'block';
+          
+          setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => notification.style.display = 'none', 300);
+          }, 3000);
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             setCurrentDate();
             setupNavigation();
+            resetSessionTimeout(); // Start timeout timer
 
             try {
                 const hasAccess = await verifyAdminAccess();

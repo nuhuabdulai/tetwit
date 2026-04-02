@@ -13,6 +13,7 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const { Readable } = require('stream');
 const { body, validationResult } = require('express-validator');
+const csrf = require('csurf');
 
 const app = express();
 app.use(compression());
@@ -142,6 +143,31 @@ app.use(cors(corsOptions));
 // Body parsing with limits
 app.use(bodyParser.json({ limit: '10kb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10kb' }));
+
+// CSRF Protection (skip safe methods)
+const csrfProtection = csrf({ cookie: true });
+app.use((req, res, next) => {
+  const safeMethods = ['GET', 'HEAD', 'OPTIONS'];
+  
+  // Exclude authentication routes from CSRF protection
+  const authRoutes = [
+    '/api/auth/login',
+    '/api/auth/register',
+    '/api/auth/refresh',
+    '/api/csrf-token'
+  ];
+  
+  if (safeMethods.includes(req.method) || authRoutes.includes(req.path)) {
+    return next();
+  }
+  csrfProtection(req, res, next);
+});
+
+// CSRF token endpoint
+app.get('/api/csrf-token', (req, res) => {
+  const token = req.csrfToken();
+  res.json({ csrfToken: token });
+});
 
 // Request logging
 app.use((req, res, next) => {
@@ -323,7 +349,7 @@ app.post('/api/auth/register', authLimiter, [
     }
 
     // Hash password
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(BCRYPT_ROUNDS);
     const password_hash = await bcrypt.hash(password, salt);
 
     // Insert new member
@@ -749,6 +775,36 @@ app.get('/api/members/:id', authenticateToken, (req, res) => {
   }
 });
 
+// Delete member (admin only)
+app.delete('/api/members/:id', authenticateToken, authorizeRole('admin'), (req, res) => {
+  try {
+    const memberId = parseInt(req.params.id);
+
+    // Prevent admin from deleting themselves
+    if (memberId === req.user.id) {
+      return res.status(400).json({ success: false, message: 'Cannot delete your own account' });
+    }
+
+    // Check if member exists
+    const member = db.prepare('SELECT id, first_name, last_name FROM members WHERE id = ?').get(memberId);
+    if (!member) {
+      return res.status(404).json({ success: false, message: 'Member not found' });
+    }
+
+    // Delete member (cascade delete will handle related records)
+    const stmt = db.prepare('DELETE FROM members WHERE id = ?');
+    stmt.run(memberId);
+
+    res.json({ 
+      success: true, 
+      message: `Member "${member.first_name} ${member.last_name}" deleted successfully` 
+    });
+  } catch (error) {
+    console.error('Delete member error:', error);
+    res.status(500).json({ success: false, message: 'Failed to delete member' });
+  }
+});
+
 // Get member statistics (admin only)
 app.get('/api/members/stats/summary', authenticateToken, authorizeRole('admin'), (req, res) => {
   try {
@@ -1167,6 +1223,223 @@ const errorHandler = (err, req, res, next) => {
   res.status(statusCode).json(response);
 };
 
+// Database Management endpoints (admin only)
+app.get('/api/admin/database-stats', authenticateToken, authorizeRole('admin'), (req, res) => {
+  try {
+    const tables = [
+      'members',
+      'events', 
+      'event_registrations',
+      'transactions',
+      'partnerships',
+      'contact_messages',
+      'elections',
+      'users'
+    ];
+
+    const tableStats = tables.map(table => {
+      const count = db.prepare(`SELECT COUNT(*) as count FROM ${table}`).get().count;
+      // Approximate size (SQLite doesn't provide exact per-table size easily)
+      const size = count > 0 ? `${(count * 0.1).toFixed(1)} KB` : '0 KB';
+      return { name: table, count, size };
+    });
+
+    res.json({
+      success: true,
+      data: {
+        total_members: db.prepare('SELECT COUNT(*) as count FROM members WHERE role != "admin"').get().count,
+        total_events: db.prepare('SELECT COUNT(*) as count FROM events').get().count,
+        total_transactions: db.prepare('SELECT COUNT(*) as count FROM transactions').get().count,
+        total_messages: db.prepare('SELECT COUNT(*) as count FROM contact_messages').get().count,
+        tables: tableStats
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.post('/api/admin/export-database', authenticateToken, authorizeRole('admin'), (req, res) => {
+  try {
+    // Export entire database as SQL
+    const sql = db.prepare("SELECT sql FROM sqlite_master WHERE type='table'").all()
+      .map(table => table.sql)
+      .join(';\n\n');
+
+    res.json({
+      success: true,
+      content: sql,
+      filename: `tetwit-database-${new Date().toISOString().split('T')[0]}.sql`
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.get('/api/admin/export-members', authenticateToken, authorizeRole('admin'), (req, res) => {
+  try {
+    const members = db.prepare('SELECT id, name, email, college, role, status, created_at FROM members WHERE role != "admin"').all();
+    
+    // Convert to CSV
+    const headers = ['ID', 'Name', 'Email', 'College', 'Role', 'Status', 'Joined'];
+    const csv = [
+      headers.join(','),
+      ...members.map(m => [
+        m.id,
+        `"${m.name}"`,
+        `"${m.email}"`,
+        `"${m.college || ''}"`,
+        m.role,
+        m.status,
+        m.created_at
+      ].join(','))
+    ].join('\n');
+
+    res.json({
+      success: true,
+      content: csv,
+      filename: `members-${new Date().toISOString().split('T')[0]}.csv`
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.get('/api/admin/export-events', authenticateToken, authorizeRole('admin'), (req, res) => {
+  try {
+    const events = db.prepare('SELECT id, title, event_type, location, event_date, status FROM events').all();
+    
+    const headers = ['ID', 'Title', 'Type', 'Location', 'Date', 'Status'];
+    const csv = [
+      headers.join(','),
+      ...events.map(e => [
+        e.id,
+        `"${e.title}"`,
+        `"${e.event_type}"`,
+        `"${e.location || ''}"`,
+        e.event_date,
+        e.status
+      ].join(','))
+    ].join('\n');
+
+    res.json({
+      success: true,
+      content: csv,
+      filename: `events-${new Date().toISOString().split('T')[0]}.csv`
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.post('/api/admin/export-table/:tableName', authenticateToken, authorizeRole('admin'), (req, res) => {
+  try {
+    const { tableName } = req.params;
+    // Whitelist of allowed tables
+    const allowedTables = ['members', 'events', 'transactions', 'partnerships', 'contact_messages', 'elections'];
+    
+    if (!allowedTables.includes(tableName)) {
+      return res.status(400).json({ success: false, message: 'Invalid table name' });
+    }
+
+    const rows = db.prepare(`SELECT * FROM ${tableName}`).all();
+    if (rows.length === 0) {
+      return res.json({ success: true, content: '', filename: `${tableName}.csv` });
+    }
+
+    const headers = Object.keys(rows[0]);
+    const csv = [
+      headers.join(','),
+      ...rows.map(row => 
+        headers.map(header => {
+          const value = row[header] === null || row[header] === undefined ? '' : row[header];
+          return typeof value === 'string' && value.includes(',') ? `"${value}"` : value;
+        }).join(',')
+      )
+    ].join('\n');
+
+    res.json({
+      success: true,
+      content: csv,
+      filename: `${tableName}-${new Date().toISOString().split('T')[0]}.csv`
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.post('/api/admin/clear-test-data', authenticateToken, authorizeRole('admin'), (req, res) => {
+  try {
+    // Remove test data but preserve admin account and important records
+    // Define criteria for test data
+    const deletedCount = {
+      members: 0,
+      events: 0,
+      partnerships: 0,
+      messages: 0
+    };
+
+    // Delete test members (non-admin accounts with placeholder/test data)
+    // Criteria: empty names, test emails, or accounts created very recently without proper data
+    const stmt = db.prepare(`
+      DELETE FROM members 
+      WHERE role != 'admin' 
+      AND (
+        name IS NULL 
+        OR name = '' 
+        OR name LIKE 'Test%' 
+        OR name LIKE 'test%'
+        OR email LIKE '%test%'
+        OR email LIKE '%placeholder%'
+        OR college IS NULL 
+        OR college = ''
+      )
+    `);
+    deletedCount.members = stmt.run().changes;
+
+    // Delete test events (events with generic names or very old/unconfirmed)
+    const stmt2 = db.prepare(`
+      DELETE FROM events 
+      WHERE title IS NULL 
+      OR title = '' 
+      OR title LIKE 'Test%' 
+      OR title LIKE 'test%'
+      OR status = 'cancelled'
+    `);
+    deletedCount.events = stmt2.run().changes;
+
+    // Delete test partnerships
+    const stmt3 = db.prepare(`
+      DELETE FROM partnerships 
+      WHERE organization IS NULL 
+      OR organization = '' 
+      OR organization LIKE 'Test%'
+    `);
+    deletedCount.partnerships = stmt3.run().changes;
+
+    // Delete old/empty contact messages
+    const stmt4 = db.prepare(`
+      DELETE FROM contact_messages 
+      WHERE name IS NULL 
+      OR name = '' 
+      OR email IS NULL 
+      OR email = ''
+    `);
+    deletedCount.messages = stmt4.run().changes;
+
+    const totalDeleted = Object.values(deletedCount).reduce((sum, count) => sum + count, 0);
+
+    res.json({
+      success: true,
+      message: 'Test data cleared successfully',
+      removed_count: totalDeleted,
+      details: deletedCount
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // 404 handler for unmatched routes
 app.use((req, res) => {
   // For API requests, return JSON
@@ -1232,9 +1505,37 @@ app.use((req, res) => {
 
 app.use(errorHandler);
 
+// Security configuration
+const BCRYPT_ROUNDS = process.env.NODE_ENV === 'production' ? 14 : 10;
+
 // Auto-create admin on first run
-const setupAdmin = require('./setup-admin');
-setupAdmin();
+(async () => {
+  try {
+    const adminEmail = 'admin@tetwit.org';
+    const adminPassword = 'Admin@TeTWIT2024!';
+    
+    const existing = db.prepare('SELECT id FROM members WHERE email = ?').get(adminEmail);
+    
+    if (!existing) {
+      const hashedPassword = await bcrypt.hash(adminPassword, BCRYPT_ROUNDS);
+      db.prepare(`
+        INSERT INTO members (
+          first_name, last_name, email, college, 
+          password_hash, role, membership_type, 
+          declaration_accepted, status, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+      `).run('Admin', 'User', adminEmail, 'TeTWIT HQ', hashedPassword, 'admin', 'full', 1, 'active');
+      
+      console.log('🎉 Admin account created!');
+      console.log('📧 Email:', adminEmail);
+      console.log('🔑 Password:', adminPassword);
+    } else {
+      console.log('✅ Admin already exists');
+    }
+  } catch (error) {
+    console.error('❌ Admin setup error:', error.message);
+  }
+})();
 
 // Start server
 app.listen(PORT, () => {
