@@ -2401,12 +2401,66 @@ footer {
 .form-group input,
 .form-group select,
 .form-group textarea {
+    width: 100%;
     padding: 14px 18px;
     border: 2px solid #e2e8f0;
     border-radius: 12px;
     font-size: 1rem;
     transition: all 0.3s ease;
     font-family: inherit;
+    box-sizing: border-box;
+}
+
+.password-field {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.password-field input {
+    flex: 1;
+    padding-right: 50px;
+    width: 100%;
+    height: auto;
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #64748b;
+    font-size: 1.1rem;
+    padding: 5px;
+    transition: color 0.3s;
+}
+
+.password-toggle:hover {
+    color: #6366f1;
+}
+
+#email,
+#password {
+    width: 100%;
+    height: 50px;
+    padding: 14px 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#email:focus,
+#password:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
 
 .form-group input:focus,
