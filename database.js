@@ -15,6 +15,9 @@ const db = new Database(dbPath);
 // Enable WAL mode for better performance
 db.pragma('journal_mode = WAL');
 
+// Enable foreign key constraints for data integrity
+db.pragma('foreign_keys = ON');
+
 // Create tables
 db.exec(`
   -- Members table
@@ -40,6 +43,10 @@ db.exec(`
     signature_name TEXT,
     declaration_date TEXT,
     status TEXT DEFAULT 'active',
+    deleted_at DATETIME,
+    failed_attempts INTEGER DEFAULT 0,
+    locked_until DATETIME,
+    last_login DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
@@ -175,6 +182,38 @@ db.exec(`
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (uploaded_by) REFERENCES members(id)
   );
+
+  -- Indexes for better query performance
+  CREATE INDEX IF NOT EXISTS idx_members_email ON members(email);
+  CREATE INDEX IF NOT EXISTS idx_members_status ON members(status);
+  CREATE INDEX IF NOT EXISTS idx_members_role ON members(role);
+  CREATE INDEX IF NOT EXISTS idx_members_college ON members(college);
+  CREATE INDEX IF NOT EXISTS idx_event_registrations_event_id ON event_registrations(event_id);
+  CREATE INDEX IF NOT EXISTS idx_event_registrations_member_id ON event_registrations(member_id);
+  CREATE INDEX IF NOT EXISTS idx_candidates_election_id ON candidates(election_id);
+  CREATE INDEX IF NOT EXISTS idx_candidates_member_id ON candidates(member_id);
+  CREATE INDEX IF NOT EXISTS idx_votes_election_id ON votes(election_id);
+  CREATE INDEX IF NOT EXISTS idx_votes_voter_id ON votes(voter_id);
+  CREATE INDEX IF NOT EXISTS idx_transactions_member_id ON transactions(member_id);
+  CREATE INDEX IF NOT EXISTS idx_resources_uploaded_by ON resources(uploaded_by);
+
+  -- Audit log table for tracking important actions
+  CREATE TABLE IF NOT EXISTS audit_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    action TEXT NOT NULL,
+    table_name TEXT NOT NULL,
+    record_id INTEGER,
+    old_values TEXT,
+    new_values TEXT,
+    performed_by INTEGER,
+    ip_address TEXT,
+    user_agent TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (performed_by) REFERENCES members(id)
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_audit_log_table_record ON audit_log(table_name, record_id);
+  CREATE INDEX IF NOT EXISTS idx_audit_log_performed_by ON audit_log(performed_by);
 `);
 
 // Migration: Add new columns if they don't exist
@@ -193,7 +232,10 @@ const migrateDb = () => {
     { name: 'motivation', sql: "ALTER TABLE members ADD COLUMN motivation TEXT" },
     { name: 'declaration_accepted', sql: "ALTER TABLE members ADD COLUMN declaration_accepted INTEGER DEFAULT 0" },
     { name: 'signature_name', sql: "ALTER TABLE members ADD COLUMN signature_name TEXT" },
-    { name: 'declaration_date', sql: "ALTER TABLE members ADD COLUMN declaration_date TEXT" }
+    { name: 'declaration_date', sql: "ALTER TABLE members ADD COLUMN declaration_date TEXT" },
+    { name: 'deleted_at', sql: "ALTER TABLE members ADD COLUMN deleted_at DATETIME" },
+    { name: 'failed_attempts', sql: "ALTER TABLE members ADD COLUMN failed_attempts INTEGER DEFAULT 0" },
+    { name: 'locked_until', sql: "ALTER TABLE members ADD COLUMN locked_until DATETIME" }
   ];
 
   for (const column of requiredColumns) {

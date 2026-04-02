@@ -1,0 +1,77 @@
+name: TeTWIT Automated Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run daily at 2 AM UTC for continuous monitoring
+    - cron: '0 2 * * *'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: 📦 Install main dependencies
+      run: npm ci
+
+    - name: 🚀 Start server
+      run: |
+        npm start &
+        sleep 5
+      env:
+        NODE_ENV: test
+        PORT: 3000
+
+    - name: 📦 Install test dependencies
+      run: |
+        cd tests
+        npm ci
+
+    - name: 🧪 Run tests
+      run: |
+        cd tests
+        node runner.js --ci
+      env:
+        TEST_SERVER_URL: http://localhost:3000
+        NODE_ENV: test
+
+    - name: 📊 Generate report
+      if: always()
+      run: |
+        cd tests
+        node generate-report.js
+
+    - name: 📤 Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-reports
+        path: |
+          test-reports/
+          test-logs/
+        retention-days: 30
+
+    - name: 📤 Upload latest results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: latest-results
+        path: test-reports/latest.json
+
+    - name: 🔔 Notify on failure
+      if: failure()
+      run: |
+        echo "❌ Tests failed! Check the artifacts for details."
+        # Add Slack/email notification here if configured

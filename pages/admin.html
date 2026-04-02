@@ -1386,15 +1386,38 @@
 
         let allMembers = [];
 
-        async function loadMembers() {
+        let currentPage = 1;
+        const itemsPerPage = 50;
+
+        async function loadMembers(page = 1) {
             try {
-                const response = await apiFetch('/api/members');
+                currentPage = page;
+                const search = document.getElementById('member-search').value;
+                const statusFilter = document.getElementById('member-filter').value;
+                const roleFilter = document.getElementById('member-role-filter').value;
+
+                // Build query parameters
+                const params = new URLSearchParams();
+                params.append('page', page);
+                params.append('limit', itemsPerPage);
+                if (search) params.append('search', search);
+                if (statusFilter) params.append('status', statusFilter);
+                if (roleFilter) params.append('role', roleFilter);
+
+                const response = await apiFetch(`/api/members?${params.toString()}`);
                 const data = await response.json();
 
                 if (data.success) {
                     allMembers = data.data;
                     displayMembers(allMembers);
-                    document.getElementById('total-members').textContent = `Total: ${allMembers.length} members`;
+                    
+                    // Update pagination info
+                    const totalMembers = data.pagination.total;
+                    const totalPages = data.pagination.totalPages;
+                    document.getElementById('total-members').textContent = `Total: ${totalMembers} members`;
+                    document.getElementById('filtered-members').textContent = `Showing: ${allMembers.length} of ${totalMembers}`;
+                    
+                    // TODO: Add pagination controls if needed
                 }
             } catch (error) {
                 console.error('Error loading members:', error);
@@ -1457,28 +1480,13 @@
         }
 
         function filterMembers() {
-            const search = document.getElementById('member-search').value.toLowerCase();
-            const statusFilter = document.getElementById('member-filter').value;
-            const roleFilter = document.getElementById('member-role-filter').value;
-
-            const filtered = allMembers.filter(member => {
-                const matchesSearch = !search || 
-                    `${member.first_name || ''} ${member.last_name || ''}`.toLowerCase().includes(search) ||
-                    (member.email || '').toLowerCase().includes(search) ||
-                    (member.college || '').toLowerCase().includes(search);
-                
-                const matchesStatus = !statusFilter || member.status === statusFilter;
-                const matchesRole = !roleFilter || member.role === roleFilter;
-
-                return matchesSearch && matchesStatus && matchesRole;
-            });
-
-            displayMembers(filtered);
+            // Server-side filtering: reload members with filter parameters
+            loadMembers(1); // Reset to page 1 when filtering
         }
 
         function getCurrentUserId() {
             try {
-                const token = localStorage.getItem('token');
+                const token = localStorage.getItem('tetwit_token');
                 if (token) {
                     const payload = JSON.parse(atob(token.split('.')[1]));
                     return payload.id;

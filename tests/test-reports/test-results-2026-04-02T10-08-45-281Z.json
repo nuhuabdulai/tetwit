@@ -1,0 +1,283 @@
+{
+  "totalSuites": 3,
+  "totalTests": 37,
+  "passed": 13,
+  "failed": 24,
+  "skipped": 0,
+  "errors": [
+    {
+      "test": "Refresh Members button fetches member list",
+      "error": "Assertion Failed: Should fetch members successfully\n  Expected: 200\n  Actual:   401",
+      "stack": "Error: Assertion Failed: Should fetch members successfully\n  Expected: 200\n  Actual:   401\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:41:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "View Member button returns member details",
+      "error": "Cannot read properties of undefined (reading 'id')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'id')\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:52:45)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Delete Member button removes member (soft delete)",
+      "error": "Cannot read properties of undefined (reading 'id')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'id')\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:74:49)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Refresh Partnerships button fetches partnerships",
+      "error": "Assertion Failed: Should fetch partnerships\n  Expected: 200\n  Actual:   401",
+      "stack": "Error: Assertion Failed: Should fetch partnerships\n  Expected: 200\n  Actual:   401\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:90:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Create Event button creates new event",
+      "error": "Assertion Failed: Event creation should succeed\n  Expected: 201\n  Actual:   403",
+      "stack": "Error: Assertion Failed: Event creation should succeed\n  Expected: 201\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:110:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Create Election button creates new election",
+      "error": "Assertion Failed: Election creation should succeed\n  Expected: 201\n  Actual:   403",
+      "stack": "Error: Assertion Failed: Election creation should succeed\n  Expected: 201\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:130:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Add Transaction button creates transaction",
+      "error": "Assertion Failed: Transaction creation should succeed\n  Expected: 201\n  Actual:   403",
+      "stack": "Error: Assertion Failed: Transaction creation should succeed\n  Expected: 201\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:150:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Refresh Messages button fetches messages",
+      "error": "Assertion Failed: Should fetch messages\n  Expected: 200\n  Actual:   404",
+      "stack": "Error: Assertion Failed: Should fetch messages\n  Expected: 200\n  Actual:   404\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:158:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Export Database button returns data",
+      "error": "Assertion Failed: Export should succeed\n  Expected: 200\n  Actual:   403",
+      "stack": "Error: Assertion Failed: Export should succeed\n  Expected: 200\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:169:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Export Members CSV button returns CSV",
+      "error": "Assertion Failed: CSV export should succeed\n  Expected: 200\n  Actual:   401",
+      "stack": "Error: Assertion Failed: CSV export should succeed\n  Expected: 200\n  Actual:   401\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:180:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Export Events CSV button returns CSV",
+      "error": "Assertion Failed: CSV export should succeed\n  Expected: 200\n  Actual:   401",
+      "stack": "Error: Assertion Failed: CSV export should succeed\n  Expected: 200\n  Actual:   401\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:191:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Non-admin user cannot access admin endpoints",
+      "error": "Assertion Failed: Should return 403 Forbidden\n  Expected: 403\n  Actual:   401",
+      "stack": "Error: Assertion Failed: Should return 403 Forbidden\n  Expected: 403\n  Actual:   401\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:255:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Logout button works",
+      "error": "Assertion Failed: Logout should succeed\n  Expected: 200\n  Actual:   403",
+      "stack": "Error: Assertion Failed: Logout should succeed\n  Expected: 200\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:41:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Edit Profile modal can be opened (client has profile)",
+      "error": "Assertion Failed: Should have user data\n  Expected value to exist, but got: undefined",
+      "stack": "Error: Assertion Failed: Should have user data\n  Expected value to exist, but got: undefined\n    at Assert.exists (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:48:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:51:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Update Profile button updates user data",
+      "error": "Assertion Failed: Profile update should succeed\n  Expected: 200\n  Actual:   403",
+      "stack": "Error: Assertion Failed: Profile update should succeed\n  Expected: 200\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:69:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Event Registration modal can be opened",
+      "error": "Assertion Failed: Data should be array\n  Expected instance of: Array\n  Actual type: object",
+      "stack": "Error: Assertion Failed: Data should be array\n  Expected instance of: Array\n  Actual type: object\n    at Assert.instanceOf (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:114:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:78:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "View Elections button shows elections",
+      "error": "Assertion Failed: Data should be array\n  Expected instance of: Array\n  Actual type: object",
+      "stack": "Error: Assertion Failed: Data should be array\n  Expected instance of: Array\n  Actual type: object\n    at Assert.instanceOf (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:114:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:105:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Resource Center button shows resources",
+      "error": "Assertion Failed: Should fetch resources\n  Expected: 200\n  Actual:   401",
+      "stack": "Error: Assertion Failed: Should fetch resources\n  Expected: 200\n  Actual:   401\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:111:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Contact Form button opens form",
+      "error": "Assertion Failed: User should be authenticated to see contact form\n  Expected value to exist, but got: undefined",
+      "stack": "Error: Assertion Failed: User should be authenticated to see contact form\n  Expected value to exist, but got: undefined\n    at Assert.exists (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:48:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:119:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Submit Contact Form button sends message",
+      "error": "Assertion Failed: Message submission should succeed\n  Expected: 201\n  Actual:   403",
+      "stack": "Error: Assertion Failed: Message submission should succeed\n  Expected: 201\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:135:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "User cannot access other users data",
+      "error": "Assertion Failed: Should handle cross-role access\n  Expected: true\n  Actual:   false",
+      "stack": "Error: Assertion Failed: Should handle cross-role access\n  Expected: true\n  Actual:   false\n    at Assert.true (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:28:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:167:18)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Session persists across requests",
+      "error": "Cannot read properties of undefined (reading 'id')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'id')\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:175:34)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Logout button invalidates token",
+      "error": "Assertion Failed: Logout should return 200\n  Expected: 200\n  Actual:   403",
+      "stack": "Error: Assertion Failed: Logout should return 200\n  Expected: 200\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AuthTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/auth-tests.js:70:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AuthTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AuthTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    },
+    {
+      "test": "Valid token can access protected endpoint",
+      "error": "Assertion Failed: Protected endpoint should return 200\n  Expected: 200\n  Actual:   401",
+      "stack": "Error: Assertion Failed: Protected endpoint should return 200\n  Expected: 200\n  Actual:   401\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AuthTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/auth-tests.js:114:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AuthTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AuthTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+    }
+  ],
+  "startTime": 124.491721,
+  "endTime": 2650.045962,
+  "suiteResults": [
+    {
+      "name": "Admin Page Tests",
+      "passed": 5,
+      "failed": 12,
+      "skipped": 0,
+      "errors": [
+        {
+          "test": "Refresh Members button fetches member list",
+          "error": "Assertion Failed: Should fetch members successfully\n  Expected: 200\n  Actual:   401",
+          "stack": "Error: Assertion Failed: Should fetch members successfully\n  Expected: 200\n  Actual:   401\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:41:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "View Member button returns member details",
+          "error": "Cannot read properties of undefined (reading 'id')",
+          "stack": "TypeError: Cannot read properties of undefined (reading 'id')\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:52:45)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Delete Member button removes member (soft delete)",
+          "error": "Cannot read properties of undefined (reading 'id')",
+          "stack": "TypeError: Cannot read properties of undefined (reading 'id')\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:74:49)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Refresh Partnerships button fetches partnerships",
+          "error": "Assertion Failed: Should fetch partnerships\n  Expected: 200\n  Actual:   401",
+          "stack": "Error: Assertion Failed: Should fetch partnerships\n  Expected: 200\n  Actual:   401\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:90:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Create Event button creates new event",
+          "error": "Assertion Failed: Event creation should succeed\n  Expected: 201\n  Actual:   403",
+          "stack": "Error: Assertion Failed: Event creation should succeed\n  Expected: 201\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:110:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Create Election button creates new election",
+          "error": "Assertion Failed: Election creation should succeed\n  Expected: 201\n  Actual:   403",
+          "stack": "Error: Assertion Failed: Election creation should succeed\n  Expected: 201\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:130:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Add Transaction button creates transaction",
+          "error": "Assertion Failed: Transaction creation should succeed\n  Expected: 201\n  Actual:   403",
+          "stack": "Error: Assertion Failed: Transaction creation should succeed\n  Expected: 201\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:150:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Refresh Messages button fetches messages",
+          "error": "Assertion Failed: Should fetch messages\n  Expected: 200\n  Actual:   404",
+          "stack": "Error: Assertion Failed: Should fetch messages\n  Expected: 200\n  Actual:   404\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:158:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Export Database button returns data",
+          "error": "Assertion Failed: Export should succeed\n  Expected: 200\n  Actual:   403",
+          "stack": "Error: Assertion Failed: Export should succeed\n  Expected: 200\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:169:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Export Members CSV button returns CSV",
+          "error": "Assertion Failed: CSV export should succeed\n  Expected: 200\n  Actual:   401",
+          "stack": "Error: Assertion Failed: CSV export should succeed\n  Expected: 200\n  Actual:   401\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:180:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Export Events CSV button returns CSV",
+          "error": "Assertion Failed: CSV export should succeed\n  Expected: 200\n  Actual:   401",
+          "stack": "Error: Assertion Failed: CSV export should succeed\n  Expected: 200\n  Actual:   401\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:191:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Non-admin user cannot access admin endpoints",
+          "error": "Assertion Failed: Should return 403 Forbidden\n  Expected: 403\n  Actual:   401",
+          "stack": "Error: Assertion Failed: Should return 403 Forbidden\n  Expected: 403\n  Actual:   401\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AdminTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/admin-tests.js:255:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AdminTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AdminTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        }
+      ],
+      "startTime": "2026-04-02T10:08:42.758Z",
+      "endTime": "2026-04-02T10:08:43.497Z"
+    },
+    {
+      "name": "Dashboard Tests",
+      "passed": 4,
+      "failed": 10,
+      "skipped": 0,
+      "errors": [
+        {
+          "test": "Logout button works",
+          "error": "Assertion Failed: Logout should succeed\n  Expected: 200\n  Actual:   403",
+          "stack": "Error: Assertion Failed: Logout should succeed\n  Expected: 200\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:41:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Edit Profile modal can be opened (client has profile)",
+          "error": "Assertion Failed: Should have user data\n  Expected value to exist, but got: undefined",
+          "stack": "Error: Assertion Failed: Should have user data\n  Expected value to exist, but got: undefined\n    at Assert.exists (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:48:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:51:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Update Profile button updates user data",
+          "error": "Assertion Failed: Profile update should succeed\n  Expected: 200\n  Actual:   403",
+          "stack": "Error: Assertion Failed: Profile update should succeed\n  Expected: 200\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:69:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Event Registration modal can be opened",
+          "error": "Assertion Failed: Data should be array\n  Expected instance of: Array\n  Actual type: object",
+          "stack": "Error: Assertion Failed: Data should be array\n  Expected instance of: Array\n  Actual type: object\n    at Assert.instanceOf (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:114:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:78:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "View Elections button shows elections",
+          "error": "Assertion Failed: Data should be array\n  Expected instance of: Array\n  Actual type: object",
+          "stack": "Error: Assertion Failed: Data should be array\n  Expected instance of: Array\n  Actual type: object\n    at Assert.instanceOf (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:114:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:105:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Resource Center button shows resources",
+          "error": "Assertion Failed: Should fetch resources\n  Expected: 200\n  Actual:   401",
+          "stack": "Error: Assertion Failed: Should fetch resources\n  Expected: 200\n  Actual:   401\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:111:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Contact Form button opens form",
+          "error": "Assertion Failed: User should be authenticated to see contact form\n  Expected value to exist, but got: undefined",
+          "stack": "Error: Assertion Failed: User should be authenticated to see contact form\n  Expected value to exist, but got: undefined\n    at Assert.exists (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:48:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:119:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Submit Contact Form button sends message",
+          "error": "Assertion Failed: Message submission should succeed\n  Expected: 201\n  Actual:   403",
+          "stack": "Error: Assertion Failed: Message submission should succeed\n  Expected: 201\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:135:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "User cannot access other users data",
+          "error": "Assertion Failed: Should handle cross-role access\n  Expected: true\n  Actual:   false",
+          "stack": "Error: Assertion Failed: Should handle cross-role access\n  Expected: true\n  Actual:   false\n    at Assert.true (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:28:13)\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:167:18)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Session persists across requests",
+          "error": "Cannot read properties of undefined (reading 'id')",
+          "stack": "TypeError: Cannot read properties of undefined (reading 'id')\n    at DashboardTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/dashboard-tests.js:175:34)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async DashboardTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async DashboardTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        }
+      ],
+      "startTime": "2026-04-02T10:08:43.497Z",
+      "endTime": "2026-04-02T10:08:44.214Z"
+    },
+    {
+      "name": "Authentication Tests",
+      "passed": 4,
+      "failed": 2,
+      "skipped": 0,
+      "errors": [
+        {
+          "test": "Logout button invalidates token",
+          "error": "Assertion Failed: Logout should return 200\n  Expected: 200\n  Actual:   403",
+          "stack": "Error: Assertion Failed: Logout should return 200\n  Expected: 200\n  Actual:   403\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AuthTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/auth-tests.js:70:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AuthTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AuthTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        },
+        {
+          "test": "Valid token can access protected endpoint",
+          "error": "Assertion Failed: Protected endpoint should return 200\n  Expected: 200\n  Actual:   401",
+          "stack": "Error: Assertion Failed: Protected endpoint should return 200\n  Expected: 200\n  Actual:   401\n    at Assert.equal (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/assert.js:9:13)\n    at AuthTests.<anonymous> (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/suites/auth-tests.js:114:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AuthTests.runTest (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:97:7)\n    at async AuthTests.run (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/utils/test-suite.js:64:7)\n    at async TestRunner.runAll (/Users/dhopepolymath/Desktop/Project/SDA PRO/tests/runner.js:63:27)"
+        }
+      ],
+      "startTime": "2026-04-02T10:08:44.214Z",
+      "endTime": "2026-04-02T10:08:45.280Z"
+    }
+  ]
+}

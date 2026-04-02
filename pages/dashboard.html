@@ -1396,16 +1396,10 @@
                 document.getElementById('uploadMessage').innerHTML = '';
 
                 try {
-                    const token = localStorage.getItem('tetwit_token');
-                    const response = await fetch('/api/resources/upload', {
+                    const result = await apiFetch('/api/resources/upload', {
                         method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        },
                         body: formData
                     });
-
-                    const result = await response.json();
 
                     if (result.success) {
                         document.getElementById('uploadMessage').innerHTML = '<span style="color: #9ae6b4;"><i class="fas fa-check-circle"></i> ' + result.message + '</span>';
@@ -1428,13 +1422,7 @@
 
             async function loadResources() {
                 try {
-                    const token = localStorage.getItem('tetwit_token');
-                    const response = await fetch('/api/resources', {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-
+                    const response = await apiFetch('/api/resources');
                     const result = await response.json();
                     const resourcesList = document.getElementById('resourcesList');
 
@@ -1514,12 +1502,8 @@
             if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
 
             try {
-                const token = localStorage.getItem('tetwit_token');
-                const response = await fetch(`/api/resources/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                const response = await apiFetch(`/api/resources/${id}`, {
+                    method: 'DELETE'
                 });
 
                 const result = await response.json();

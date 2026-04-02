@@ -2,6 +2,7 @@ const express = require('express');
 const compression = require('compression');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const path = require('path');
 const fs = require('fs');
 const db = require('./database');
@@ -96,7 +97,7 @@ const apiLimiter = rateLimit({
 
 const authLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 5,
+  max: 20, // Increased for testing (was 5)
   message: { success: false, message: 'Too many login attempts, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false
@@ -143,28 +144,36 @@ app.use(cors(corsOptions));
 // Body parsing with limits
 app.use(bodyParser.json({ limit: '10kb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10kb' }));
+app.use(cookieParser());
 
-// CSRF Protection (skip safe methods)
+// CSRF Protection - apply globally but skip safe methods and auth routes
 const csrfProtection = csrf({ cookie: true });
+
+// Routes that should skip CSRF validation entirely (no cookie expected)
+const csrfExemptRoutes = [
+  '/api/auth/login',
+  '/api/auth/register',
+  '/api/auth/refresh'
+];
+
+// Skip CSRF in development mode for easier testing
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
 app.use((req, res, next) => {
-  const safeMethods = ['GET', 'HEAD', 'OPTIONS'];
-  
-  // Exclude authentication routes from CSRF protection
-  const authRoutes = [
-    '/api/auth/login',
-    '/api/auth/register',
-    '/api/auth/refresh',
-    '/api/csrf-token'
-  ];
-  
-  if (safeMethods.includes(req.method) || authRoutes.includes(req.path)) {
+  // Skip CSRF for exempt routes
+  if (csrfExemptRoutes.includes(req.path)) {
     return next();
   }
+  // Skip CSRF in development mode
+  if (isDevelopment) {
+    return next();
+  }
+  // Apply CSRF protection for unsafe methods only (POST, PUT, DELETE, PATCH)
   csrfProtection(req, res, next);
 });
 
-// CSRF token endpoint
-app.get('/api/csrf-token', (req, res) => {
+// CSRF token endpoint - needs csrf middleware to attach req.csrfToken()
+app.get('/api/csrf-token', csrfProtection, (req, res) => {
   const token = req.csrfToken();
   res.json({ csrfToken: token });
 });
@@ -426,20 +435,125 @@ app.post('/api/auth/login', authLimiter, [
     const { email, password } = req.body;
     const sanitizedEmail = email.toLowerCase().trim();
 
-    // Find member
+    // Find member (include lockout fields)
     const member = db.prepare('SELECT * FROM members WHERE email = ?').get(sanitizedEmail);
     if (!member) {
+      // Log failed attempt for non-existent email (for security monitoring)
+      try {
+        db.prepare(`
+          INSERT INTO audit_log (action, table_name, record_id, new_values, performed_by, ip_address, user_agent)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+        `).run(
+          'login_failed',
+          'members',
+          null,
+          JSON.stringify({ email: sanitizedEmail, reason: 'user_not_found' }),
+          null,
+          req.ip || req.connection.remoteAddress,
+          req.headers['user-agent']
+        );
+      } catch (auditError) {
+        console.error('Failed to create audit log:', auditError.message);
+      }
       return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    }
+
+    // Check if account is locked
+    if (member.locked_until) {
+      const lockedUntil = new Date(member.locked_until);
+      if (lockedUntil > new Date()) {
+        const remainingMinutes = Math.ceil((lockedUntil - new Date()) / (1000 * 60));
+        return res.status(403).json({
+          success: false,
+          message: `Account is temporarily locked. Please try again in ${remainingMinutes} minutes.`,
+          locked: true,
+          locked_until: member.locked_until
+        });
+      }
+      // Lock expired, reset failed attempts
+      db.prepare('UPDATE members SET failed_attempts = 0, locked_until = NULL WHERE id = ?').run(member.id);
     }
 
     // Check password
     const validPassword = await bcrypt.compare(password, member.password_hash);
     if (!validPassword) {
+      // Increment failed attempts
+      const newAttempts = (member.failed_attempts || 0) + 1;
+      db.prepare('UPDATE members SET failed_attempts = ? WHERE id = ?').run(newAttempts, member.id);
+
+      // Check if account should be locked (5 failed attempts)
+      if (newAttempts >= 5) {
+        const lockDuration = 15 * 60 * 1000; // 15 minutes
+        const lockedUntil = new Date(Date.now() + lockDuration).toISOString();
+        db.prepare('UPDATE members SET locked_until = ? WHERE id = ?').run(lockedUntil, member.id);
+
+        // Log account lock
+        try {
+          db.prepare(`
+            INSERT INTO audit_log (action, table_name, record_id, old_values, new_values, performed_by, ip_address, user_agent)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          `).run(
+            'account_locked',
+            'members',
+            member.id,
+            JSON.stringify({ failed_attempts: newAttempts - 1 }),
+            JSON.stringify({ failed_attempts: newAttempts, locked_until: lockedUntil }),
+            null,
+            req.ip || req.connection.remoteAddress,
+            req.headers['user-agent']
+          );
+        } catch (auditError) {
+          console.error('Failed to create audit log:', auditError.message);
+        }
+
+        return res.status(403).json({
+          success: false,
+          message: 'Account has been temporarily locked due to too many failed login attempts. Please try again in 15 minutes.',
+          locked: true,
+          locked_until: lockedUntil
+        });
+      }
+
+      // Log failed login attempt
+      try {
+        db.prepare(`
+          INSERT INTO audit_log (action, table_name, record_id, new_values, performed_by, ip_address, user_agent)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+        `).run(
+          'login_failed',
+          'members',
+          member.id,
+          JSON.stringify({ failed_attempts: newAttempts }),
+          null,
+          req.ip || req.connection.remoteAddress,
+          req.headers['user-agent']
+        );
+      } catch (auditError) {
+        console.error('Failed to create audit log:', auditError.message);
+      }
+
       return res.status(401).json({ success: false, message: 'Invalid email or password' });
     }
 
-    // Update last login
-    db.prepare('UPDATE members SET last_login = CURRENT_TIMESTAMP WHERE id = ?').run(member.id);
+    // Successful login - reset failed attempts and update last login
+    db.prepare('UPDATE members SET failed_attempts = 0, locked_until = NULL, last_login = CURRENT_TIMESTAMP WHERE id = ?').run(member.id);
+
+    // Log successful login
+    try {
+      db.prepare(`
+        INSERT INTO audit_log (action, table_name, record_id, performed_by, ip_address, user_agent)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `).run(
+        'login_success',
+        'members',
+        member.id,
+        member.id,
+        req.ip || req.connection.remoteAddress,
+        req.headers['user-agent']
+      );
+    } catch (auditError) {
+      console.error('Failed to create audit log:', auditError.message);
+    }
 
     // Generate JWT token (exclude sensitive data)
     const token = jwt.sign(
@@ -746,24 +860,82 @@ app.get('/api/resources/categories', authenticateToken, (req, res) => {
 // Get all members (admin only)
 app.get('/api/members', authenticateToken, authorizeRole('admin'), (req, res) => {
   try {
-    const members = db.prepare('SELECT id, first_name, last_name, email, phone, college, program, year_of_study, skills, interests, role, status, created_at FROM members ORDER BY created_at DESC').all();
-    res.json({ success: true, data: members });
+    const page = parseInt(req.query.page) || 1;
+    const limit = Math.min(parseInt(req.query.limit) || 50, 100); // Max 100 per page
+    const offset = (page - 1) * limit;
+    const search = req.query.search || '';
+    const status = req.query.status || '';
+    const role = req.query.role || '';
+
+    // Build WHERE clause dynamically
+    const conditions = ['deleted_at IS NULL'];
+    const params = [];
+
+    if (search) {
+      conditions.push('(first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR college LIKE ?)');
+      const searchPattern = `%${search}%`;
+      params.push(searchPattern, searchPattern, searchPattern, searchPattern);
+    }
+
+    if (status) {
+      conditions.push('status = ?');
+      params.push(status);
+    }
+
+    if (role) {
+      conditions.push('role = ?');
+      params.push(role);
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    // Get total count for pagination
+    const countQuery = `SELECT COUNT(*) as total FROM members ${whereClause}`;
+    const totalResult = db.prepare(countQuery).get(...params);
+
+    // Get paginated members
+    const membersQuery = `
+      SELECT id, first_name, last_name, email, phone, college, program, year_of_study, skills, interests, role, status, created_at 
+      FROM members 
+      ${whereClause}
+      ORDER BY created_at DESC
+      LIMIT ? OFFSET ?
+    `;
+    const members = db.prepare(membersQuery).all(...params, limit, offset);
+
+    res.json({
+      success: true,
+      data: members,
+      pagination: {
+        page,
+        limit,
+        total: totalResult.total,
+        totalPages: Math.ceil(totalResult.total / limit)
+      }
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Get members error:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch members' });
   }
 });
 
 // Get member by ID (own profile or admin)
 app.get('/api/members/:id', authenticateToken, (req, res) => {
   try {
+    // Validate member ID parameter
+    const memberId = parseInt(req.params.id);
+    if (isNaN(memberId) || memberId <= 0) {
+      return res.status(400).json({ success: false, message: 'Invalid member ID' });
+    }
+
     const isAdmin = req.user.role === 'admin';
-    const isOwnProfile = req.user.id === parseInt(req.params.id);
+    const isOwnProfile = req.user.id === memberId;
 
     if (!isAdmin && !isOwnProfile) {
       return res.status(403).json({ success: false, message: 'Insufficient permissions' });
     }
 
-    const member = db.prepare('SELECT id, first_name, last_name, email, phone, college, program, year_of_study, skills, interests, role, status, created_at FROM members WHERE id = ?').get(req.params.id);
+    const member = db.prepare('SELECT id, first_name, last_name, email, phone, college, program, year_of_study, skills, interests, role, status, created_at FROM members WHERE id = ?').get(memberId);
 
     if (member) {
       res.json({ success: true, data: member });
@@ -778,26 +950,63 @@ app.get('/api/members/:id', authenticateToken, (req, res) => {
 // Delete member (admin only)
 app.delete('/api/members/:id', authenticateToken, authorizeRole('admin'), (req, res) => {
   try {
+    // Validate member ID parameter
     const memberId = parseInt(req.params.id);
+    if (isNaN(memberId) || memberId <= 0) {
+      return res.status(400).json({ success: false, message: 'Invalid member ID' });
+    }
 
     // Prevent admin from deleting themselves
     if (memberId === req.user.id) {
       return res.status(400).json({ success: false, message: 'Cannot delete your own account' });
     }
 
-    // Check if member exists
-    const member = db.prepare('SELECT id, first_name, last_name FROM members WHERE id = ?').get(memberId);
+    // Check if member exists and is not already deleted
+    const member = db.prepare('SELECT id, first_name, last_name, email, status, deleted_at FROM members WHERE id = ?').get(memberId);
     if (!member) {
       return res.status(404).json({ success: false, message: 'Member not found' });
     }
 
-    // Delete member (cascade delete will handle related records)
-    const stmt = db.prepare('DELETE FROM members WHERE id = ?');
-    stmt.run(memberId);
+    if (member.deleted_at) {
+      return res.status(400).json({ success: false, message: 'Member has already been deleted' });
+    }
+
+    // Capture old values for audit log
+    const oldValues = JSON.stringify({
+      first_name: member.first_name,
+      last_name: member.last_name,
+      email: member.email,
+      status: member.status
+    });
+
+    // Soft delete: set deleted_at timestamp
+    const now = new Date().toISOString();
+    const stmt = db.prepare('UPDATE members SET deleted_at = ?, updated_at = ? WHERE id = ?');
+    stmt.run(now, now, memberId);
+
+    // Insert audit log entry
+    try {
+      db.prepare(`
+        INSERT INTO audit_log (action, table_name, record_id, old_values, new_values, performed_by, ip_address, user_agent)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        'soft_delete',
+        'members',
+        memberId,
+        oldValues,
+        JSON.stringify({ deleted_at: now, updated_at: now }),
+        req.user.id,
+        req.ip || req.connection.remoteAddress,
+        req.headers['user-agent']
+      );
+    } catch (auditError) {
+      console.error('Failed to create audit log:', auditError.message);
+      // Continue - audit log failure shouldn't block the operation
+    }
 
     res.json({ 
       success: true, 
-      message: `Member "${member.first_name} ${member.last_name}" deleted successfully` 
+      message: `Member "${member.first_name} ${member.last_name}" has been deactivated` 
     });
   } catch (error) {
     console.error('Delete member error:', error);
@@ -808,9 +1017,9 @@ app.delete('/api/members/:id', authenticateToken, authorizeRole('admin'), (req, 
 // Get member statistics (admin only)
 app.get('/api/members/stats/summary', authenticateToken, authorizeRole('admin'), (req, res) => {
   try {
-    const total = db.prepare('SELECT COUNT(*) as count FROM members').get();
-    const byCollege = db.prepare('SELECT college, COUNT(*) as count FROM members GROUP BY college').all();
-    const byStatus = db.prepare('SELECT status, COUNT(*) as count FROM members GROUP BY status').all();
+    const total = db.prepare('SELECT COUNT(*) as count FROM members WHERE deleted_at IS NULL').get();
+    const byCollege = db.prepare('SELECT college, COUNT(*) as count FROM members WHERE deleted_at IS NULL GROUP BY college').all();
+    const byStatus = db.prepare('SELECT status, COUNT(*) as count FROM members WHERE deleted_at IS NULL GROUP BY status').all();
 
     res.json({
       success: true,
@@ -1508,32 +1717,62 @@ app.use(errorHandler);
 // Security configuration
 const BCRYPT_ROUNDS = process.env.NODE_ENV === 'production' ? 14 : 10;
 
-// Auto-create admin on first run
+// Auto-create admin and client accounts on first run
 (async () => {
   try {
+    // Ensure exactly one admin account exists
     const adminEmail = 'admin@tetwit.org';
     const adminPassword = 'Admin@TeTWIT2024!';
     
-    const existing = db.prepare('SELECT id FROM members WHERE email = ?').get(adminEmail);
+    const existingAdmin = db.prepare('SELECT id FROM members WHERE email = ? AND role = ?').get(adminEmail, 'admin');
     
-    if (!existing) {
-      const hashedPassword = await bcrypt.hash(adminPassword, BCRYPT_ROUNDS);
+    if (!existingAdmin) {
+      // Check if any admin exists - if yes, don't create another
+      const anyAdmin = db.prepare('SELECT id FROM members WHERE role = ? LIMIT 1').get('admin');
+      if (anyAdmin) {
+        console.log('✅ Admin account already exists (different email)');
+      } else {
+        const hashedPassword = await bcrypt.hash(adminPassword, BCRYPT_ROUNDS);
+        db.prepare(`
+          INSERT INTO members (
+            first_name, last_name, email, college, 
+            password_hash, role, membership_type, 
+            declaration_accepted, status, created_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+        `).run('Admin', 'User', adminEmail, 'TeTWIT HQ', hashedPassword, 'admin', 'full', 1, 'active');
+        
+        console.log('🎉 Admin account created!');
+        console.log('📧 Email:', adminEmail);
+        console.log('🔑 Password:', adminPassword);
+      }
+    } else {
+      console.log('✅ Admin already exists');
+    }
+
+    // Create client account (Client 1)
+    const clientEmail = 'client1@tetwit.org';
+    const clientPassword = 'Client1@TeTWIT2024!';
+    
+    const existingClient = db.prepare('SELECT id FROM members WHERE email = ?').get(clientEmail);
+    
+    if (!existingClient) {
+      const hashedClientPassword = await bcrypt.hash(clientPassword, BCRYPT_ROUNDS);
       db.prepare(`
         INSERT INTO members (
           first_name, last_name, email, college, 
           password_hash, role, membership_type, 
           declaration_accepted, status, created_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
-      `).run('Admin', 'User', adminEmail, 'TeTWIT HQ', hashedPassword, 'admin', 'full', 1, 'active');
+      `).run('Client', 'One', clientEmail, 'Client Organization', hashedClientPassword, 'member', 'full', 1, 'active');
       
-      console.log('🎉 Admin account created!');
-      console.log('📧 Email:', adminEmail);
-      console.log('🔑 Password:', adminPassword);
+      console.log('🎉 Client account created!');
+      console.log('📧 Email:', clientEmail);
+      console.log('🔑 Password:', clientPassword);
     } else {
-      console.log('✅ Admin already exists');
+      console.log('✅ Client account already exists');
     }
   } catch (error) {
-    console.error('❌ Admin setup error:', error.message);
+    console.error('❌ Account setup error:', error.message);
   }
 })();
 
