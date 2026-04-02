@@ -1575,12 +1575,37 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
+                // Check authentication before loading dashboard
+                const token = getToken();
+                if (!token) {
+                    redirectToLogin();
+                    return;
+                }
+
+                // Validate token with server
+                const authResponse = await fetch(`${API_BASE}/api/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!authResponse.ok) {
+                    redirectToLogin();
+                    return;
+                }
+
+                const authData = await authResponse.json();
+                if (!authData.success) {
+                    redirectToLogin();
+                    return;
+                }
+
+                // Token is valid, proceed with dashboard initialization
                 resetSessionTimeout(); // Start timeout timer
                 await loadUserData();
                 await loadEvents();
                 await loadElections();
             } catch (error) {
                 console.error('Dashboard initialization failed:', error);
+                redirectToLogin();
             }
 
             const contactModal = document.getElementById('contactModal');

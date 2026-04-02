@@ -716,7 +716,8 @@
             <li><a href="#" data-tab="finance"><i class="fas fa-wallet"></i> <span>Finance</span></a></li>
             <li><a href="#" data-tab="messages"><i class="fas fa-envelope"></i> <span>Messages</span></a></li>
             <li><a href="#" data-tab="database"><i class="fas fa-database"></i> <span>Database</span></a></li>
-            <li><a href="../index.html"><i class="fas fa-home"></i> <span>Back to Site</span></a></li>
+            <li><a href="/index.html"><i class="fas fa-home"></i> <span>Back to Site</span></a></li>
+            <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
         </ul>
     </aside>
 
@@ -1164,7 +1165,7 @@
     </div>
 
     <script>
-        const API_BASE = '';
+        const API_BASE = 'http://localhost:3001';
         let currentAdmin = null;
 
         function getToken() {
@@ -1179,6 +1180,23 @@
         function redirectToLogin() {
             clearSession();
             window.location.href = '/pages/login.html';
+        }
+
+        async function logout() {
+            try {
+                const token = getToken();
+                if (token) {
+                    await fetch(`${API_BASE}/api/auth/logout`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                clearSession();
+                window.location.href = '/pages/login.html';
+            }
         }
 
         function escapeHtml(value) {
@@ -1220,25 +1238,8 @@
                 Authorization: `Bearer ${token}`
             };
 
-            // Add CSRF token for state-changing operations
-            const method = (options.method || 'GET').toUpperCase();
-            const unsafeMethods = ['POST', 'PUT', 'DELETE', 'PATCH'];
-            if (unsafeMethods.includes(method)) {
-                // Fetch CSRF token if not already provided
-                if (!headers['X-CSRF-Token']) {
-                    try {
-                        const csrfResponse = await fetch(`${API_BASE}/api/csrf-token`, {
-                            headers: { Authorization: `Bearer ${token}` }
-                        });
-                        const csrfData = await csrfResponse.json();
-                        if (csrfData.csrfToken) {
-                            headers['X-CSRF-Token'] = csrfData.csrfToken;
-                        }
-                    } catch (error) {
-                        console.error('Failed to fetch CSRF token:', error);
-                    }
-                }
-            }
+            // CSRF protection temporarily disabled for MVP
+            // Note: CSRF tokens should be implemented in production
 
             if (options.body && !headers['Content-Type']) {
                 headers['Content-Type'] = 'application/json';

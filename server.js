@@ -22,7 +22,7 @@ app.use(compression());
 require('dotenv').config();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES = process.env.JWT_EXPIRES || '7d';
+const JWT_EXPIRES = process.env.JWT_EXPIRES || '1h';
 
 if (!JWT_SECRET) {
   console.error('❌ JWT_SECRET not set in .env');
@@ -83,7 +83,11 @@ app.use(helmet({
     maxAge: 31536000,
     includeSubDomains: true,
     preload: true
-  }
+  },
+  frameguard: {
+    action: 'deny'
+  },
+  contentTypeOptions: true
 }));
 
 // Rate limiting
@@ -97,7 +101,7 @@ const apiLimiter = rateLimit({
 
 const authLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 20, // Increased for testing (was 5)
+  max: process.env.NODE_ENV === 'production' ? 5 : 20, // 5 per hour in production, 20 for testing
   message: { success: false, message: 'Too many login attempts, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false
@@ -1172,6 +1176,35 @@ app.get('/api/events', (req, res) => {
   }
 });
 
+// Get single event by ID
+app.get('/api/events/:id', (req, res) => {
+  try {
+    const eventId = parseInt(req.params.id);
+    if (isNaN(eventId) || eventId <= 0) {
+      return res.status(400).json({ success: false, message: 'Invalid event ID' });
+    }
+
+    const event = db.prepare('SELECT * FROM events WHERE id = ?').get(eventId);
+    if (!event) {
+      return res.status(404).json({ success: false, message: 'Event not found' });
+    }
+
+    res.json({ success: true, data: event });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Get all messages (admin only)
+app.get('/api/messages', authenticateToken, authorizeRole('admin'), (req, res) => {
+  try {
+    const messages = db.prepare('SELECT * FROM contact_messages ORDER BY created_at DESC').all();
+    res.json({ success: true, data: messages });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 app.post('/api/events/:eventId/register', authenticateToken, (req, res) => {
   try {
     const member_id = req.user.id;
@@ -1206,20 +1239,44 @@ app.post('/api/contact', publicFormLimiter, (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
 
+    // Validate required fields
     if (!name || !email || !message) {
       return res.status(400).json({ success: false, message: 'Name, email, and message are required' });
     }
 
+    // Validate name length
+    const trimmedName = name.trim();
+    if (trimmedName.length < 2 || trimmedName.length > 100) {
+      return res.status(400).json({ success: false, message: 'Name must be between 2 and 100 characters' });
+    }
+
+    // Validate email format
     if (!validateEmail(email)) {
       return res.status(400).json({ success: false, message: 'Invalid email format' });
     }
 
+    // Validate message length
+    const trimmedMessage = message.trim();
+    if (trimmedMessage.length < 10 || trimmedMessage.length > 2000) {
+      return res.status(400).json({ success: false, message: 'Message must be between 10 and 2000 characters' });
+    }
+
+    // Validate subject length if provided
+    let sanitizedSubject = null;
+    if (subject) {
+      const trimmedSubject = subject.trim();
+      if (trimmedSubject.length > 200) {
+        return res.status(400).json({ success: false, message: 'Subject must be less than 200 characters' });
+      }
+      sanitizedSubject = sanitizeInput(trimmedSubject);
+    }
+
     const stmt = db.prepare('INSERT INTO contact_messages (name, email, subject, message) VALUES (?, ?, ?, ?)');
     const result = stmt.run(
-      sanitizeInput(name),
+      sanitizeInput(trimmedName),
       email.toLowerCase().trim(),
-      subject ? sanitizeInput(subject) : null,
-      sanitizeInput(message)
+      sanitizedSubject,
+      sanitizeInput(trimmedMessage)
     );
 
     res.status(201).json({
@@ -1420,16 +1477,71 @@ const errorHandler = (err, req, res, next) => {
 
   const statusCode = err.statusCode || 500;
 
-  const response = {
-    success: false,
-    message
-  };
+  // For API requests, return JSON
+  if (req.path.startsWith('/api/')) {
+    const response = {
+      success: false,
+      message
+    };
 
-  if (process.env.NODE_ENV !== 'production' && err.stack) {
-    response.stack = err.stack;
+    if (process.env.NODE_ENV !== 'production' && err.stack) {
+      response.stack = err.stack;
+    }
+
+    return res.status(statusCode).json(response);
   }
 
-  res.status(statusCode).json(response);
+  // For static file requests, return HTML error page
+  res.status(statusCode).send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>${statusCode} - Error</title>
+      <style>
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          margin: 0;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+        }
+        .container {
+          text-align: center;
+          padding: 2rem;
+        }
+        h1 {
+          font-size: 4rem;
+          margin: 0 0 1rem 0;
+        }
+        p {
+          font-size: 1.2rem;
+          margin: 0.5rem 0;
+          opacity: 0.9;
+        }
+        a {
+          color: white;
+          text-decoration: underline;
+          font-weight: 500;
+        }
+        a:hover {
+          opacity: 0.8;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>${statusCode}</h1>
+        <p>${message}</p>
+        <p><a href="/">Return to Home</a></p>
+      </div>
+    </body>
+    </html>
+  `);
 };
 
 // Database Management endpoints (admin only)
@@ -1487,15 +1599,16 @@ app.post('/api/admin/export-database', authenticateToken, authorizeRole('admin')
 
 app.get('/api/admin/export-members', authenticateToken, authorizeRole('admin'), (req, res) => {
   try {
-    const members = db.prepare('SELECT id, name, email, college, role, status, created_at FROM members WHERE role != "admin"').all();
+    const members = db.prepare('SELECT id, first_name, last_name, email, college, role, status, created_at FROM members WHERE role != "admin"').all();
     
     // Convert to CSV
-    const headers = ['ID', 'Name', 'Email', 'College', 'Role', 'Status', 'Joined'];
+    const headers = ['ID', 'First Name', 'Last Name', 'Email', 'College', 'Role', 'Status', 'Joined'];
     const csv = [
       headers.join(','),
       ...members.map(m => [
         m.id,
-        `"${m.name}"`,
+        `"${m.first_name || ''}"`,
+        `"${m.last_name || ''}"`,
         `"${m.email}"`,
         `"${m.college || ''}"`,
         m.role,
@@ -1620,9 +1733,9 @@ app.post('/api/admin/clear-test-data', authenticateToken, authorizeRole('admin')
     // Delete test partnerships
     const stmt3 = db.prepare(`
       DELETE FROM partnerships 
-      WHERE organization IS NULL 
-      OR organization = '' 
-      OR organization LIKE 'Test%'
+      WHERE organization_name IS NULL 
+      OR organization_name = '' 
+      OR organization_name LIKE 'Test%'
     `);
     deletedCount.partnerships = stmt3.run().changes;
 
