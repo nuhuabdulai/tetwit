@@ -7,7 +7,7 @@ services:
     env: node
     region: oregon
     plan: free
-    buildCommand: npm install && npm rebuild better-sqlite3 && node migrate-database.js
+    buildCommand: npm install buildCommand: npm install && npm rebuild better-sqlite3 && node migrate-database.jsbuildCommand: npm install && npm rebuild better-sqlite3 && node migrate-database.js npm rebuild better-sqlite3
     startCommand: npm start
     healthCheckPath: /api/ping
     envVars:
@@ -18,7 +18,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES
-        value: "7d"
+        value: "1h"
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
