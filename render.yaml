@@ -7,7 +7,7 @@ services:
     env: node
     region: oregon
     plan: free
-    buildCommand: npm install buildCommand: npm install && npm rebuild better-sqlite3 && node migrate-database.jsbuildCommand: npm install && npm rebuild better-sqlite3 && node migrate-database.js npm rebuild better-sqlite3
+    buildCommand: npm install && npm rebuild better-sqlite3
     startCommand: npm start
     healthCheckPath: /api/ping
     envVars:

@@ -126,12 +126,12 @@ const getCorsOrigins = () => {
   const corsOrigins = process.env.CORS_ORIGINS || '';
 
   if (env === 'production') {
-    // In production, use configured origins or default to Replit domain pattern
+    // In production, use configured origins or default to Render/Replit domain patterns
     if (corsOrigins) {
       return corsOrigins.split(',').map(origin => origin.trim());
     }
-    // Default: allow any Replit domain (adjust if using custom domain)
-    return ['https://*.repl.co', 'http://localhost:3000', 'http://127.0.0.1:3000'];
+    // Default: allow Render, Replit, and localhost domains
+    return ['https://*.onrender.com', 'https://*.repl.co', 'http://localhost:3000', 'http://127.0.0.1:3000'];
   }
 
   // Development: allow localhost
