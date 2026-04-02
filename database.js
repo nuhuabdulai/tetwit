@@ -1,8 +1,16 @@
 const Database = require('better-sqlite3');
 const path = require('path');
+const fs = require('fs');
+
+// Ensure database directory exists
+const dbDir = path.join(__dirname, 'assets', 'db');
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
 
 // Create/connect to SQLite database
-const db = new Database(path.join(__dirname, 'assets', 'db', 'tetwit.db'));
+const dbPath = path.join(dbDir, 'tetwit.db');
+const db = new Database(dbPath);
 
 // Enable WAL mode for better performance
 db.pragma('journal_mode = WAL');
