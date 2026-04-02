@@ -1232,6 +1232,10 @@ app.use((req, res) => {
 
 app.use(errorHandler);
 
+// Auto-create admin on first run
+const setupAdmin = require('./setup-admin');
+setupAdmin();
+
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 TeTWIT Server running at http://localhost:${PORT}`);
